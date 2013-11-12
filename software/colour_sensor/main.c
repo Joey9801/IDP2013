@@ -14,7 +14,7 @@ int main(void){
 }
 
 
-void io_init(void){
+void init(void){
 /*
 setup:
 DDR registers
