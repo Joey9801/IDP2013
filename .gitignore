@@ -18,3 +18,10 @@
 *.exe
 *.out
 *.app
+
+#Eagle working files
+*.*#*
+
+#other random things
+*.*~
+*.*.orig

@@ -18,6 +18,7 @@ UsedLibrary="/home/joe/eagle-6.5.0/lbr/74xx-little-de.lbr"
 UsedLibrary="/home/joe/eagle-6.5.0/lbr/74xx-little-us.lbr"
 UsedLibrary="/home/joe/eagle-6.5.0/lbr/74xx-us.lbr"
 UsedLibrary="/home/joe/eagle-6.5.0/lbr/751xx.lbr"
+UsedLibrary="/home/joe/eagle-6.5.0/lbr/Joe Roberts.lbr"
 UsedLibrary="/home/joe/eagle-6.5.0/lbr/advanced-test-technologies.lbr"
 UsedLibrary="/home/joe/eagle-6.5.0/lbr/agilent-technologies.lbr"
 UsedLibrary="/home/joe/eagle-6.5.0/lbr/allegro.lbr"
@@ -355,13 +356,13 @@ UsedLibrary="/home/joe/eagle-6.5.0/lbr/SparkFun-Eagle-Libraries/SparkFun-FreqCtr
 UsedLibrary="/home/joe/eagle-6.5.0/lbr/SparkFun-Eagle-Libraries/SparkFun-LED.lbr"
 UsedLibrary="/home/joe/eagle-6.5.0/lbr/SparkFun-Eagle-Libraries/SparkFun-Passives.lbr"
 UsedLibrary="/home/joe/eagle-6.5.0/lbr/SparkFun-Eagle-Libraries/SparkFun-PowerIC.lbr"
-UsedLibrary="/home/joe/eagle-6.5.0/lbr/SparkFun-Eagle-Libraries/SparkFun-Resistors.lbr"
 UsedLibrary="/home/joe/eagle-6.5.0/lbr/SparkFun-Eagle-Libraries/SparkFun-RF.lbr"
+UsedLibrary="/home/joe/eagle-6.5.0/lbr/SparkFun-Eagle-Libraries/SparkFun-Resistors.lbr"
 UsedLibrary="/home/joe/eagle-6.5.0/lbr/SparkFun-Eagle-Libraries/SparkFun-Sensors.lbr"
 
 [Win_1]
 Type="Control Panel"
-Loc="1874 151 2894 831"
+Loc="1943 236 2963 916"
 State=2
 Number=0
 
