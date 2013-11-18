@@ -1,50 +1,57 @@
-#define F_CPU 8000000L //8Mhz
+#define F_CPU 1000000L //8Mhz
 
-#define samples 5
+#define threshold
 
 #include <avr/io.h>
 #include <util/delay.h>
-#include <avr/eeprom.h>
+//#include <avr/eeprom.h>
+#include <math.h>
 #include "adc.c"
 
 void init(void);
-int calibrate(void);
+void calibrate(void);
+void read_RGBD(int samples);
 
-int working;
-int measured[3]; //last readings [R, G, B]
+int measured[3]; //last readings [G, R, B]
 int dark;
-char calibrations[3]; //calibration multipliers (from eeprom + last calibration)
+//char calibrations[3]; //calibration multipliers (from eeprom + last calibration)
 int working; //working value during the measurements
+
+int i;
+int ii; //iterating variables
 
 
 int main(void)
 {
     init();
-    int i;
-    int ii; //iterating variables
     for(;;)
     {
-        PORTA &= 0xF8; //get a dark reading
-        _delay_us(20); //let things settle
-        for(ii=0; ii<samples; i++) //take n readings
-        {
-            working += read_adc();
-        }
-        dark = working/5;
-        for(i=0; i<3; i++)
-        {
-            PORTA = (PORTA&0xF8) |  (1<<i);//set the i'th colour on
-            _delay_us(20); //delay to let everything settle
-            for(ii=0; ii<samples; i++) //take n readings
-            {
-                working += read_adc() - dark;
-            }
-            measured[i] = (working/samples)>>2; //adjust for 'things'
-            measured[i] = measured[i] * calibrations[i]; //adjust for whatever the calibrations are
-        }
-
-        //logic to work out and output the correct colour (/lack of)
-
+        read_RGBD(8);
+        
+        measured[0] =measured[0]*1;    //G
+        measured[1] =measured[1]*1;    //B
+        measured[2] =measured[2]*1;    //R
+        
+        /*
+        float hue = 10;
+        hue = atan2(1.1732*(measured[0]-measured[1]), 2*(measured[2]-measured[1]-measured[0]))*57.296;
+        if((hue>1.05)&&(hue<3.14))
+            PORTB = (PORTB&0xF8)|(1<<0);
+        else if((hue>3.14)&&(hue<5.24))
+            PORTB = (PORTB&0xF8)|(1<<1);
+        else
+            PORTB = (PORTB&0xF8)|(1<<2);
+        */
+        
+        //disregard special things for the moment
+        //just pick the biggest
+        if((measured[0]>measured[1])&&(measured[0]>measured[2]))
+            PORTB = (PORTB&0xF8)|(1<<0);
+        else if(measured[1]>measured[2])
+            PORTB = (PORTB&0xF8)|(1<<1);
+        else
+            PORTB = (PORTB&0xF8)|(1<<2);
+        
     }
     return 0;
 }
@@ -53,15 +60,54 @@ int main(void)
 void init(void)
 {
     DDRA = 0b111; //scanning LED's
-    DDRA |= 0b111<<4; //3 output pins
-    DDRA &= !(1<<3); //PA3 as input for calibration trigger
-    PORTA |= (1<<3); //Pull PA3 high internally
-
+    DDRB = 0b111; //output LED's
     init_adc();
-    /*
-    setup:
-    i2c as slave
-    */
+
+    //calibrate(); //calibrate at power on regardless for now
 
     //read in calibration data from eeprom
+    //setup i2c as slave
+}
+/*
+void calibrate(void)
+{
+    read_RGBD(50); //read in lots, accurate calibrations are important
+    //something to process this data
+
+    for(i=0; i<3; i++)
+    {
+        calibrations[i] = measured[i]>>5; //MS8 bits
+    }
+    return;
+}
+*/
+void read_RGBD(int samples)
+{
+    int working;
+    dark = 0;
+    measured[0] = 0;
+    measured[1] = 0;
+    measured[2] = 0;
+
+    PORTA = PORTA&0xF8; //get a dark reading
+    working = 0;
+    _delay_ms(1); //let things settle
+    for(ii=0; ii<samples; ii++) //take n readings
+    {
+        dark += read_adc(0b011);
+    }
+    //dark = working/samples;
+
+    for(i=0; i<3; i++)
+    {
+        working = 0;
+        PORTA = (PORTA&0xF8) | (1<<i);//set the i'th colour on
+        _delay_ms(1); //delay to let everything settle
+        for(ii=0; ii<samples; ii++) //take n readings
+        {
+            measured[i] += read_adc(0b011) - dark;
+        }
+        //measured[i] = working/samples; //adjust for 'things'
+    }
+
 }

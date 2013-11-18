@@ -1,22 +1,20 @@
 #include <avr/io.h>
 
 void init_adc();
-int read_adc(void);
+int read_adc(char);
 
 void init_adc ()
 {
-    ADMUX &= !(1|(1<<1)); //use vcc as reference source
-    ADCSRA = (1 << ADEN) | (7 << ADPS0); //enable adv peripheral with /2 clock prescalar
-    ADMUX |= 0b111; //selecting PA7/ADC7
+    ADMUX = 0; //use vcc as reference source and enable ADC3
+    ADCSRA = (1<<ADEN)|(1<<ADPS2); //enable adc peripheral with /2 clock prescalar
+    return;
 }
 
-int read_adc(void)
+int read_adc(char ch)
 {
-    int adc;
-    ADCSRA |= (1 << ADSC);
-    while (!(ADCSRA & (1 << ADIF)));
-    ADCSRA |= (1 << ADIF);
-    adc = ADCL; //read in the low, then the high byte
-    adc |= ADCH<<8;
-    return (adc);
+    ch &= 0b00000111;  // limit ch to 0-7
+    ADMUX = (ADMUX & 0xF8)|ch; //enable ch with ADMUX
+    ADCSRA |= (1<<ADSC); //start single conversion
+    while(ADCSRA & (1<<ADSC)); //wait for conversion to complete
+    return (ADC);
 }
