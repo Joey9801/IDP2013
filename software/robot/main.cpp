@@ -1,83 +1,64 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include <iostream>
+using namespace std;
 #include <robot_instr.h>
 #include <robot_link.h>
+#include <stopwatch.h>
+#define ROBOT_NUM 3 		// The id number (see below)
+robot_link rlink; 		    // datatype for the robot link
+stopwatch stopwatch;		//Create stopwatch
 
-//robot id number - change this to be evil and control other peoples robots
-#define ROBOT_NUM 3
+int left_speed;
+int right_speed;
+int init();
 
-using namespace std;
 
-robot_link rlink;
-
-enum idp_errors
+int main ()
 {
-    ROBOT_INIT_FAIL = 1
-    //other errors.. add here as needed
-};
+	init();
+	
 
-void error_handler(idp_errors ret);
-
-void init(void);
-void set_intent(void);
-void plan_route(void);
-void navigate(void);
-void perform_action(void);
-
-int main(void)
-{
-    try
-    {
-        init();
-    }
-    catch(idp_errors ret)
-    {
-        error_handler(ret);
-    }
-
-    for(;;)
-    {
-        set_intent(); //set the relevant globals declaring what we're going to do
-        //set_intent is where the really high-level programming stuff happens - determines the overall behaviour of the robot
-
-        plan_route(); //set the route for the line following to follow
-        //a stop-gap measure in plan_route would be to hard-code the routes
-
-        navigate(); //loop through line follining and turns as per the route
-
-        perform_action(); //do the thing that set_intent decided we should do at the destination
-    }
-
-    return 0;
 }
 
-
-void init(void)
+int init()
 {
-    printf("Attempting to initialise link\n");
-    if (!rlink.initialise (ROBOT_NUM))   // setup the link
-    {
-        rlink.print_errs(" ");
-        throw(ROBOT_INIT_FAIL);
-        //return;
-    }
-//initialise everything
-//flash a couple of lights and make a fuss
-    return;
-}
+	#ifdef __arm__
+	    if (!rlink.initialise ())
+	    {
+		cout << "Cannot initialise link" << endl;
+		rlink.print_errs(" ");
+		return -1;
+	    }
+	#else
+	    if (!rlink.initialise (ROBOT_NUM))
+	    {
+		cout << "Cannot initialise link" << endl;
+		rlink.print_errs(" ");
+		return -1;
+	    }
+	#endif
+	int val;				 // Error data from microprocessor
+	/*     Initialise link, conditional on compilier (local/wifi)         */
 
-void error_handler(idp_errors ret)
-{
-    printf("Error thrown! - ");
-    switch(ret)
-    {
-    case ROBOT_INIT_FAIL:
-        printf("ROBOT_INIT_FAIL\n");
-        exit(-1);
-    }
-}
 
-void set_intent(void) {}
-void plan_route(void) {}
-void navigate(void) {}
-void perform_action(void) {}
+	val = rlink.request (TEST_INSTRUCTION); // send test instruction
+
+	if (val == TEST_INSTRUCTION_RESULT)   // check result
+	{
+	cout << "Test passed" << endl;
+	//All okay, proceed
+	}
+	else if (val == REQUEST_ERROR)
+	{
+	cout << "Fatal errors on link:" << endl;
+	rlink.print_errs();
+	}
+	else
+	{
+	cout << "Test failed (bad value returned)" << endl;
+	return -1; // error, finish
+	}
+	cout << rlink.request (STATUS) << endl;
+	rlink.command (STOP_SELECT, 4);
+	cout << rlink.request (STATUS) << endl;
+return 1;
+}
