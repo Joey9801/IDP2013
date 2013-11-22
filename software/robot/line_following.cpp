@@ -1,112 +1,115 @@
 #include "line_following.hh"
-/*
-enum turn{
-    left = 1,
-    right,
-    forward,
-    backward
-}
-*/
 
 //Follow line until junction reached
 int line_follow_junction()
 {
-    left_on_line = (rlink.request(READ_PORT_0) & 0x01);
-    right_on_line = (rlink.request(READ_PORT_0) & 0x02);
-    centre_on_line = (rlink.request(READ_PORT_0) & 0x04);
-    while(!(right_on_line && left_on_line) )	//Run until both sensors are high/on line, i.e. on a junction
+    while(!(get_linesensors()==0b111))
     {
-        left_on_line = (rlink.request(READ_PORT_0) & 0x01);
-        right_on_line = (rlink.request(READ_PORT_0) & 0x02);
-        centre_on_line = (rlink.request(READ_PORT_0) & 0x04);
-        if( ((!left_on_line) && (!right_on_line) && (!centre_on_line)) && (last_sensor_values[0] || last_sensor_values[2]))
+        switch(line_sensors[0])
         {
-            cout << error_handling_line();
-        }
-        last_sensor_values[0] = left_on_line;
-        last_sensor_values[1] = centre_on_line;
-        last_sensor_values[2] = right_on_line;
-        //Print Left/Right line sensor values
-        cout << right_on_line << ' ' << centre_on_line << ' ' << left_on_line <<endl;
-        //Left side reading black? Boost right motor
-        if(left_on_line)
-        {
-            left_speed=60-30;
-            right_speed=60+30;
-        }
-        //Right side reading black? Boost left motor
-        if(right_on_line)
-        {
-            left_speed=60+30;
-            right_speed=60-30;
-        }
-
-        rlink.command(MOTOR_1_GO, left_speed);		//Update left motor speed
-        rlink.command(MOTOR_2_GO, right_speed);		//Update right motor speed
-        left_speed = 60;							//Reset motors to same speeds, will run forward next loop unless correction needed
-        right_speed = 60;
-    }
-    return 1;
-
-}
-
-
-//Perform 90/180 degree turn at junction
-int line_follow_turn()//enum turn command)
-{
-/*
-    switch(command){
-        case left:
-            cout << "Performing left turn\n";
-            //do something
+        case 0b000:
+            //Panic case, all sensors off line
+            line_recovery();
             break;
-        case right:
-            cout << "Performing right turn\n";
-            //do something
+        case 0b111: case 0b011:
+            //Both left and right high, must be at a junction
             break;
-        case forward:
-            cout << "Performing no turn\n";
-            //do something
+        case 0b100:
+            //Only centre sensor high, everything is happy
+            left_speed = right_speed = SPEED;
             break;
-        case backward:
-            cout << "Performing 180deg turn\n";
-            //do something
+        case 0b101: case 0b001:
+            //Left on line, right off - Boost right motor
+            left_speed=SPEED-CORRECTION;
+            right_speed=SPEED+CORRECTION;
+            break;
+        case 0b110: case 0b010:
+            //Right on line, left off - Boost left motor
+            left_speed=SPEED+CORRECTION;
+            right_speed=SPEED-CORRECTION;
             break;
         default:
-            cout << "invalid turn asked for\n" //Panic
-            
+            cout << "get_linesensors() returned something funny: " << line_sensors[0] << endl;
+            break;
+        }
+        set_motors(left_speed, right_speed);
     }
-    */  
+    set_motors(0, 0);
+    //cout << "
     return 1;
 }
 
 
-int error_handling_line()
+char get_linesensors(void)
 {
-    rlink.command(MOTOR_1_GO, 0);		//stop left motor
-    rlink.command(MOTOR_2_GO, 0);		//stop right motor
+    char val = rlink.request(READ_PORT_0);
+    val = val&0b0111; //only take first three sensors
+    line_sensors[1] = line_sensors[0];
+    line_sensors[0] = val;
+    return val;
+}
 
-    if(last_sensor_values[0]) //Left sensor before leaving was high
+
+void set_motors(char left_speed, char right_speed)
+{
+    rlink.command(MOTOR_1_GO, left_speed);
+    rlink.command(MOTOR_2_GO, right_speed);
+    return;
+}
+
+//To be called only at a junction
+int line_follow_turn(turn_t command)
+{
+    switch(command)
     {
-        left_speed = 127+90;
-        right_speed = 90;
-        cout<< "here";
+    case Left:
+        cout << "Performing left turn\n";
+        //do something
+        break;
+    case Right:
+        cout << "Performing right turn\n";
+        //do something
+        break;
+    case Forward:
+        cout << "Going straight on\n";
+        //do something
+        break;
+    case Backward:
+        cout << "Performing 180deg turn\n";
+        //do something
+        break;
+    default:
+        cout << "invalid turn asked for\n"; //Panic
+        //throw(INVALID_TURN);
+
     }
-    if(last_sensor_values[2]) //Right sensor before leaving was high
+    return 1;
+}
+
+
+int line_recovery(void)
+{
+//we've lost the line
+//rotate on the spot toward where the line last was
+
+    set_motors(0, 0);
+
+    if(line_sensors[1]&0b001) //Left sensor before leaving was high
+        set_motors(127+90, 90);
+
+    else if(line_sensors[1]&0b010) //Right sensor before leaving was high
+        set_motors(90, 127+90);
+
+    else
     {
-        left_speed = 90;
-        right_speed = 127+90;
-        cout<< "here";
+        cout << "line_recovery() was called at the wrong time\n";
+        cout << "line_sensors[] are: " << line_sensors[0] << " " << line_sensors[1] << endl;
+        return -1;
     }
 
-    while(!(centre_on_line))
-    {
-        rlink.command(MOTOR_1_GO, left_speed);		//start left motor
-        rlink.command(MOTOR_2_GO, right_speed);		//start right motor
-        left_on_line = (rlink.request(READ_PORT_0) & 0x01);
-        right_on_line = (rlink.request(READ_PORT_0) & 0x02);
-        centre_on_line = (rlink.request(READ_PORT_0) & 0x04);
-    }
+    while(!(get_linesensors()&0b100)); //wait for centre line sensor to be high
+    set_motors(0, 0);
+    cout << "line_recovery() successful\n";
 
-    return 11111;
+    return 1;
 }

@@ -5,7 +5,7 @@
 #include <delay.h>
 
 
-robot_link rlink; 
+robot_link rlink;
 #include "line_following.cpp"
 
 #define ROBOT_NUM 3 		// The id number (see below)
@@ -16,23 +16,12 @@ using namespace std;
 int init();
 void pause_1s();
 
-stopwatch stopwatch;		//Create stopwatch
+stopwatch task_time;		//Create stopwatch
 
 
 int main ()
 {
     init();
-    cout << rlink.request(READ_PORT_0) << endl;
-    int i;
-    cout << "entering the loop\n";
-    for(;;){
-        for(i=0; i<8; i++){
-            rlink.command(WRITE_PORT_1, ~(1<<i));
-            cout << "before the delay\n";
-            delay(1000);
-            cout << i;
-        }
-    }
     line_follow_junction();
 
     /*
@@ -68,17 +57,13 @@ int init()
         return -1;
     }
 #endif
-    int val;				 // Error data from microprocessor
-    /*     Initialise link, conditional on compilier (local/wifi)         */
 
 
-    val = rlink.request (TEST_INSTRUCTION); // send test instruction
+    int val = rlink.request (TEST_INSTRUCTION);
 
-    if (val == TEST_INSTRUCTION_RESULT)   // check result
-    {
+    if (val == TEST_INSTRUCTION_RESULT)
         cout << "Test passed" << endl;
-        //All okay, proceed
-    }
+
     else if (val == REQUEST_ERROR)
     {
         cout << "Fatal errors on link:" << endl;
@@ -93,14 +78,4 @@ int init()
     rlink.command (STOP_SELECT, 4);
     cout << rlink.request (STATUS) << endl;
     return 1;
-}
-
-void pause_1s()
-{
-    stopwatch.start();
-    while(stopwatch.read() < 1000)
-    {
-
-    }
-    stopwatch.stop();
 }
