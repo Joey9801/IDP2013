@@ -1,5 +1,12 @@
 #include "line_following.hh"
-
+/*
+enum turn{
+    left = 1,
+    right,
+    forward,
+    backward
+}
+*/
 
 //Follow line until junction reached
 int line_follow_junction()
@@ -42,11 +49,37 @@ int line_follow_junction()
     return 1;
 
 }
+
+
 //Perform 90/180 degree turn at junction
-int line_follow_turn()
+int line_follow_turn()//enum turn command)
 {
+/*
+    switch(command){
+        case left:
+            cout << "Performing left turn\n";
+            //do something
+            break;
+        case right:
+            cout << "Performing right turn\n";
+            //do something
+            break;
+        case forward:
+            cout << "Performing no turn\n";
+            //do something
+            break;
+        case backward:
+            cout << "Performing 180deg turn\n";
+            //do something
+            break;
+        default:
+            cout << "invalid turn asked for\n" //Panic
+            
+    }
+    */  
     return 1;
 }
+
 
 int error_handling_line()
 {

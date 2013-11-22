@@ -2,6 +2,8 @@
 #include <stopwatch.h>
 #include <robot_instr.h>
 #include <robot_link.h>
+#include <delay.h>
+
 
 robot_link rlink; 
 #include "line_following.cpp"
@@ -20,7 +22,17 @@ stopwatch stopwatch;		//Create stopwatch
 int main ()
 {
     init();
-
+    cout << rlink.request(READ_PORT_0) << endl;
+    int i;
+    cout << "entering the loop\n";
+    for(;;){
+        for(i=0; i<8; i++){
+            rlink.command(WRITE_PORT_1, ~(1<<i));
+            cout << "before the delay\n";
+            delay(1000);
+            cout << i;
+        }
+    }
     line_follow_junction();
 
     /*
