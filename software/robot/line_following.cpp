@@ -58,9 +58,9 @@ void set_motors(char left_speed, char right_speed)
 }
 
 //To be called only at a junction
-int line_follow_turn(turn_t command)
+int line_follow_turn(turning turn)
 {
-    switch(command)
+    switch(turn)
     {
     case Left:
         cout << "Performing left turn\n";

@@ -1,23 +1,6 @@
-#include <iostream>
-#include <stopwatch.h>
-#include <robot_instr.h>
-#include <robot_link.h>
-#include <delay.h>
-
-
-robot_link rlink;
+#include "main.hh"
 #include "line_following.cpp"
-
-#define ROBOT_NUM 3 		// The id number (see below)
-
-using namespace std;
-
-
-int init();
-void pause_1s();
-
-stopwatch task_time;		//Create stopwatch
-
+#include "debug.cpp"
 
 int main ()
 {
@@ -25,18 +8,19 @@ int main ()
     line_follow_junction();
 
     /*
-    for(;;)
+    status.time.start()
+    while(status.time.read()<(1000*60*5)) //Spend 5 minutes on the task before quitting
     {
-        set_intent(); //set the relevant globals declaring what we're going to do
-        //set_intent is where the really high-level programming stuff happens - determines the overall behaviour of the robot
+        set_intent();
 
-        plan_route(); //set the route for the line following to follow
-        //a stop-gap measure in plan_route would be to hard-code the routes
+        plan_route(); 
 
-        navigate(); //loop through line follining and turns as per the route
+        navigate(); 
 
-        perform_action(); //do the thing that set_intent decided we should do at the destination
+        perform_action(); 
     }
+    
+    //Shutdown robot properly
     */
 }
 
@@ -59,7 +43,7 @@ int init()
 #endif
 
 
-    int val = rlink.request (TEST_INSTRUCTION);
+    int val = rlink.request(TEST_INSTRUCTION);
 
     if (val == TEST_INSTRUCTION_RESULT)
         cout << "Test passed" << endl;

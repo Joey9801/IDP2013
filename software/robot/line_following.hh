@@ -7,16 +7,8 @@
 
 using namespace std;
 
-enum turn_t
-{
-    Left = 1,
-    Right,
-    Forward,
-    Backward
-};
-
 int line_follow_junction(void);
-int line_follow_turn(turn_t);
+int line_follow_turn(turning);
 int line_recovery(void);
 void set_motors(char left_speed, char right_speed);
 
