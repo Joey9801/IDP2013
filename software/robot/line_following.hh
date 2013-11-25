@@ -2,7 +2,7 @@
 #include <robot_instr.h>
 #include <robot_link.h>
 
-#define SPEED 60
+#define SPEED 127
 #define CORRECTION 30
 
 using namespace std;
@@ -11,6 +11,8 @@ int line_follow_junction(void);
 int line_follow_turn(turning);
 int line_recovery(void);
 void set_motors(char left_speed, char right_speed);
+void run_motors(char left_speed, char right_speed, int time);
+
 
 char get_linesensors(void);
 

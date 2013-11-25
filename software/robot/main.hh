@@ -26,6 +26,11 @@ enum turning
     Forward,
     Backward
 };
+enum actuator_command
+{
+	Extend,// = 0b00000000,
+	Retract// = 0b10000000
+};
 enum job_status
 {
     COLLECTING_PARCELS = 1,
@@ -86,4 +91,5 @@ void perform_action(void); //do the thing that set_intent decided we should do a
 robot_link rlink;
 robot_status status;
 robot_route route;
+int outputs = 0b01111111;
 

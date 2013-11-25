@@ -21,11 +21,11 @@ int line_follow_junction()
         case 0b101: case 0b001:
             //Left on line, right off - Boost right motor
             left_speed=SPEED-CORRECTION;
-            right_speed=SPEED+CORRECTION;
+            right_speed=SPEED;
             break;
         case 0b110: case 0b010:
             //Right on line, left off - Boost left motor
-            left_speed=SPEED+CORRECTION;
+            left_speed=SPEED;
             right_speed=SPEED-CORRECTION;
             break;
         default:
@@ -63,18 +63,35 @@ int line_follow_turn(turning turn)
     switch(turn)
     {
     case Left:
+	run_motors(60,60,2500);
+	run_motors(127+100,100,1000);
+	while(!(get_linesensors()&0b100))
+	set_motors(127+100,100);
         cout << "Performing left turn\n";
         //do something
         break;
     case Right:
+	run_motors(60,60,2500);
+	run_motors(100,127+100,1000);
+	while(!(get_linesensors()&0b100))
+	set_motors(100,127+100);
         cout << "Performing right turn\n";
         //do something
         break;
     case Forward:
+	run_motors(60,60,2500);
         cout << "Going straight on\n";
         //do something
         break;
     case Backward:
+	run_motors(60,60,2500);
+	run_motors(100,127+100,1000);
+	while(!(get_linesensors()&0b100))
+	set_motors(100,127+100);
+	
+	run_motors(100,127+100,1000);
+	while(!(get_linesensors()&0b100))
+	set_motors(100,127+100);
         cout << "Performing 180deg turn\n";
         //do something
         break;
@@ -83,6 +100,7 @@ int line_follow_turn(turning turn)
         //throw(INVALID_TURN);
 
     }
+    
     return 1;
 }
 
@@ -112,4 +130,12 @@ int line_recovery(void)
     cout << "line_recovery() successful\n";
 
     return 1;
+}
+
+void run_motors(char left_speed, char right_speed, int time)
+{
+	status.time.start();
+	set_motors(left_speed, right_speed);
+	while(status.time.read() < time){}
+	status.time.stop();
 }

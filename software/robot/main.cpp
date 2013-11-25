@@ -1,14 +1,19 @@
 #include "main.hh"
+
 #include "line_following.cpp"
+#include "parcel_collection.cpp"
 #include "debug.cpp"
 
 int main ()
 {
     init();
     line_follow_junction();
+    turning turn = Backward;
+    line_follow_turn(turn);
 
-    /*
-    status.time.start()
+
+	    
+    /*status.time.start();
     while(status.time.read()<(1000*60*5)) //Spend 5 minutes on the task before quitting
     {
         set_intent();
@@ -19,9 +24,9 @@ int main ()
 
         perform_action(); 
     }
-    
-    //Shutdown robot properly
     */
+    //Shutdown robot properly
+    
 }
 
 int init()
