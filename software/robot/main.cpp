@@ -1,15 +1,15 @@
 #include "main.hh"
 
-#include "line_following.cpp"
-#include "parcel_collection.cpp"
 #include "debug.cpp"
+#include "io.cpp"
+#include "line_following.cpp"
+#include "navigation.cpp"
 
 int main ()
 {
     init();
-    line_follow_junction();
-    turning turn = Backward;
-    line_follow_turn(turn);
+    lf_until_junction();
+    lf_turn(RIGHT);
 
 
 	    

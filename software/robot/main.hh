@@ -10,7 +10,8 @@ using namespace std;
 
 enum idp_errors
 {
-    ROBOT_INIT_FAIL = 1
+    ROBOT_INIT_FAIL = 1,
+    INVALID_ROUTE
     //other errors.. add here as needed
 };
 
@@ -21,15 +22,10 @@ enum travel_status
 };
 enum turning
 {
-    Left = 1,
-    Right,
-    Forward,
-    Backward
-};
-enum actuator_command
-{
-	Extend,// = 0b00000000,
-	Retract// = 0b10000000
+    LEFT = 1,
+    RIGHT,
+    FORWARD,
+    BACKWARD
 };
 enum job_status
 {
@@ -55,13 +51,13 @@ struct robot_status {
     char last_node;
     char next_node;
 
-    stopwatch time;
+    stopwatch task_time; //Stopwatch measuring time since start of task
 };
 
 struct robot_route {
     char length; //number of "follow until junction" calls in route
-                     //also equal to the largest valid index of node_list[]
-    char node_list[10];
+                 //also equal to the largest valid index of node[]
+    char node[10];
     char starting_node;
     char finishing_node;
 };
@@ -91,5 +87,17 @@ void perform_action(void); //do the thing that set_intent decided we should do a
 robot_link rlink;
 robot_status status;
 robot_route route;
-int outputs = 0b01111111;
 
+char line_sensors[2];
+//line_sensors[0] = current readings
+//line_sensors[1] = last readings
+/*
+Bits 0-3 of val are the readings from the 4 line sensors
+The bits are high when the sensor is on the line
+Sensor allocation is currently as follows:
+  bit: Thing
+    1: Left
+    2: Right
+    3: Centre
+    4: Unallocated
+*/
