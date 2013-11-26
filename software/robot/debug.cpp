@@ -36,8 +36,8 @@ void print_status(void){
 
 void print_route(void){
     cout << "Printing route plan\n";
-    cout << "route.starting_node = " << route.starting_node << endl;
-    cout << "route.finishing_node = " << route.finishing_node << endl;
+    cout << "route.starting_node = " << route.node[0] << endl;
+    cout << "route.finishing_node = " << route.node[route.length] << endl;
     cout << "    (Sanity check - status.current_node = " << status.current_node << ")\n";
     cout << "Proposed route is:\n";
     for(int i = 0; i<=route.length; i++)

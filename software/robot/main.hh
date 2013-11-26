@@ -8,13 +8,15 @@
 
 using namespace std;
 
+//////////////////////////////////////////
+//   Enumerated types for readability   //
+//////////////////////////////////////////
 enum idp_errors
 {
     ROBOT_INIT_FAIL = 1,
     INVALID_ROUTE
     //other errors.. add here as needed
 };
-
 enum travel_status
 {
     IN_TRANSIT = 1,
@@ -26,6 +28,14 @@ enum turning
     RIGHT,
     FORWARD,
     BACKWARD
+};
+//Directions oriented with delivery conveyor on the left
+enum directions{
+    NC = 0, //Not Connected
+    NORTH,
+    SOUTH,
+    EAST,
+    WEST
 };
 enum job_status
 {
@@ -42,31 +52,42 @@ enum parcel_type
     NONE
 };  
 
-struct robot_status {
-    job_status job;
-    travel_status travel;
-    parcel_type front_parcel;
-    parcel_type back_parcel;
-    char current_node;
-    char last_node;
-    char next_node;
-
-    stopwatch task_time; //Stopwatch measuring time since start of task
+class robot_status {
+    public:
+        //Task status
+        job_status job;
+        travel_status travel;
+        parcel_type front_parcel;
+        parcel_type back_parcel;
+        
+        //Location status
+        unsigned char current_node;
+        unsigned char last_node;
+        unsigned char next_node;
+        directions direction;
+        
+        stopwatch task_time; //Stopwatch measuring time since start of task
+        
+        void initialise(void){
+            travel = AT_NODE;
+            current_node = 1;
+            direction = WEST;
+            front_parcel = NONE;
+            back_parcel = NONE;
+        }
 };
 
 struct robot_route {
-    char length; //number of "follow until junction" calls in route
+    unsigned char length; //number of "follow until junction" calls in route
                  //also equal to the largest valid index of node[]
-    char node[10];
-    char starting_node;
-    char finishing_node;
+    unsigned char node[10];
 };
 
 
 //////////////////////////////////
 //     Function Declarations    //
 //////////////////////////////////
-int init();
+int init(void);
 
 //high level functions
 void set_intent(void);     //set the relevant globals declaring what we're going to do

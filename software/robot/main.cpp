@@ -31,25 +31,25 @@ int main ()
 
 int init()
 {
-#ifdef __arm__
+    //status.initialise(void); //Initialises status facing west in the starting box
+    
+    #ifdef __arm__
     if (!rlink.initialise ())
     {
         cout << "Cannot initialise link" << endl;
         rlink.print_errs(" ");
         return -1;
     }
-#else
+    #else
     if (!rlink.initialise (ROBOT_NUM))
     {
         cout << "Cannot initialise link" << endl;
         rlink.print_errs(" ");
         return -1;
     }
-#endif
-
-
+    #endif
+    
     int val = rlink.request(TEST_INSTRUCTION);
-
     if (val == TEST_INSTRUCTION_RESULT)
         cout << "Test passed" << endl;
 
@@ -57,14 +57,18 @@ int init()
     {
         cout << "Fatal errors on link:" << endl;
         rlink.print_errs();
+        //throw(ROBOT_INIT_FAIL);
+        return -1;
     }
     else
     {
         cout << "Test failed (bad value returned)" << endl;
+        //throw(ROBOT_INIT_FAIL);
         return -1; // error, finish
     }
     cout << rlink.request (STATUS) << endl;
     rlink.command (STOP_SELECT, 4);
     cout << rlink.request (STATUS) << endl;
     return 1;
+    
 }
