@@ -33,8 +33,8 @@ enum turning
 enum directions{
     NC = 0, //Not Connected
     NORTH,
-    SOUTH,
     EAST,
+    SOUTH,
     WEST
 };
 enum job_status
@@ -60,6 +60,7 @@ class robot_status {
         parcel_type front_parcel;
         parcel_type back_parcel;
         
+        unsigned char parcels_delivered;
         //Location status
         unsigned char current_node;
         unsigned char last_node;
@@ -74,6 +75,8 @@ class robot_status {
             direction = WEST;
             front_parcel = NONE;
             back_parcel = NONE;
+            parcels_delivered = 0;
+            job = COLLECTING_PARCELS;
         }
 };
 

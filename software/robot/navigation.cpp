@@ -1,13 +1,4 @@
-//#include "navigation.hh"
-
-void plan_route(void);
-void navigate(void);
-
-directions inverse_direction[5] = {NC, SOUTH, WEST, NORTH, EAST};
-
-//idp_map[i][j] is the direction you have to leave i to get to j
-directions idp_map[25][25]; 
-
+#include "navigation.hh"
 
 void plan_route(){
     //fill in 'robot_route route' with information about the route
@@ -37,7 +28,9 @@ void navigate(){
         turning turn;
         directions current = status.direction;
         directions desired = idp_map[status.current_node][status.next_node];
+        print_status();
         
+        cout << current << desired << endl;
         if(current==desired)
 		    turn = FORWARD;
 	    else if (current==inverse_direction[desired])
@@ -46,15 +39,17 @@ void navigate(){
 		    turn = RIGHT;
 	    else if((current-1==desired)|((current==1)&(desired==4)))
 		    turn = LEFT;
-	    else
+	    else{
 		    cout << "Invalid directions given\n";
+		    //throw(TURNING_ERROR);
+		    return;
+		}
         
         lf_turn(turn); //turn to face the desired node
         lf_until_junction(); //
         
         status.travel = AT_NODE;
         status.current_node = route.node[i];
-        //status.direction = inverse_direction[status.current_node][status.last_node];
-        i++;        
+        status.direction = inverse_direction[(idp_map[status.current_node][status.last_node])];      
     }
 }

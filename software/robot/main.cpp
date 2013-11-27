@@ -1,5 +1,5 @@
 #include "main.hh"
-
+#define __verbose__
 #include "debug.cpp"
 #include "io.cpp"
 #include "line_following.cpp"
@@ -8,10 +8,29 @@
 int main ()
 {
     init();
+    /*
+    try{
+        init();
+    }
+    catch(idp_errors e){
+        //do something with the error
+        return;
+    }
+    */
     lf_until_junction();
     lf_turn(RIGHT);
 
-
+    //demo route
+    route.node[0] = 1;
+    route.node[1] = 2;
+    route.node[2] = 9;
+    route.node[3] = 10;
+    route.node[4] = 17;
+    route.length = 4;
+    
+    status.initialise();
+    
+    navigate();
 	    
     /*status.time.start();
     while(status.time.read()<(1000*60*5)) //Spend 5 minutes on the task before quitting
@@ -29,7 +48,7 @@ int main ()
     
 }
 
-int init()
+void init()
 {
     //status.initialise(void); //Initialises status facing west in the starting box
     
@@ -38,13 +57,15 @@ int init()
     {
         cout << "Cannot initialise link" << endl;
         rlink.print_errs(" ");
-        return -1;
+        //throw(ROBOT_INIT_FAIL);
+        return;
     }
     #else
     if (!rlink.initialise (ROBOT_NUM))
     {
         cout << "Cannot initialise link" << endl;
         rlink.print_errs(" ");
+        //throw(ROBOT_INIT_FAIL);
         return -1;
     }
     #endif
