@@ -1,4 +1,5 @@
 void print_status(void);
+void print_route(void);
 void print_parcel_type(parcel_type type);
 
 void print_status(void){

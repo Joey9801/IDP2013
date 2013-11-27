@@ -39,21 +39,27 @@ void navigate(){
 	    else if((current-1==desired)|((current==1)&(desired==4)))
 		    turn = LEFT;
 	    else{
-		    cout << "Invalid directions given\n";
+		    cout << "navigate(): Invalid directions given\n";
 		    //throw(TURNING_ERROR);
 		    return;
 		}
+		
+        #ifdef __verbose__
+            cout << "navigate(): Calling lf_turn()\n";
+        #endif
         
         lf_turn(turn); //turn to face the desired node
         
         #ifdef __verbose__
-            cout << "Following line to next junction\n";
+            cout << "navigate(): lf_turn(turn) finished\n";
+            cout << "navigate(): Calling lf_until_junction()\n";
         #endif
-        
+
         lf_until_junction();
-        
-        //#ifdef __verbose__
-        //    cout
+
+        #ifdef __verbose__
+            cout << "navigate(): lf_until_junction() finished\n";
+        #endif
         
         status.travel = AT_NODE;
         status.current_node = route.node[i];

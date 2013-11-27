@@ -1,16 +1,12 @@
 #include "io.hh"
 
 //The next two functions are not complete
-void set_front_indicator(parcel_type type){
-    outputs[1] |= 0b0000111; //set all front led's off
-    //outputs[1]
-    return;
-}
+void set_indicators(void){
+    outputs[1] |= 0b1110111; //set all 6 coloured led's off
+    outputs[1] ^= (1<<status.front_parcel); //These two lines will need changing/replacing
+    outputs[1] ^= (1<<status.back_parcel)<<4; //I have no idea which colours are connected to which pins atm
+    rlink.command(WRITE_PORT_1, outputs[1]);
 
-void set_back_indicator(parcel_type type){
-    outputs[1] |= 0b0000111; //set all front led's off
-    //outputs[1]
-    return;
 }
 
 char get_linesensors(void)

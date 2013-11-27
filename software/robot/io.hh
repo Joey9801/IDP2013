@@ -19,8 +19,7 @@ void set_arm_down(void);
 //positive belt_speed is into the robot
 void set_conveyor(signed char belt_speed);
 
-void set_front_indicator(parcel_type type);
-void set_back_indicator(parcel_type type);
+void set_indicators(void);
 
 
 /////////////////////////////
