@@ -7,7 +7,7 @@
 
 int main ()
 {
-    init();
+    //init();
     /*
     try{
         init();
@@ -17,9 +17,8 @@ int main ()
         return;
     }
     */
-    lf_until_junction();
-    lf_turn(RIGHT);
-
+    status.initialise();
+    init_idp_map();
     //demo route
     route.node[0] = 1;
     route.node[1] = 2;
@@ -28,8 +27,7 @@ int main ()
     route.node[4] = 17;
     route.length = 4;
     
-    status.initialise();
-    
+    print_route();
     navigate();
 	    
     /*status.time.start();
@@ -48,9 +46,10 @@ int main ()
     
 }
 
-void init()
+void init(void)
 {
-    //status.initialise(void); //Initialises status facing west in the starting box
+    status.initialise();
+    init_idp_map();
     
     #ifdef __arm__
     if (!rlink.initialise ())
@@ -66,7 +65,7 @@ void init()
         cout << "Cannot initialise link" << endl;
         rlink.print_errs(" ");
         //throw(ROBOT_INIT_FAIL);
-        return -1;
+        return;
     }
     #endif
     
@@ -79,17 +78,17 @@ void init()
         cout << "Fatal errors on link:" << endl;
         rlink.print_errs();
         //throw(ROBOT_INIT_FAIL);
-        return -1;
+        return;
     }
     else
     {
         cout << "Test failed (bad value returned)" << endl;
         //throw(ROBOT_INIT_FAIL);
-        return -1; // error, finish
+        return; // error, finish
     }
     cout << rlink.request (STATUS) << endl;
     rlink.command (STOP_SELECT, 4);
     cout << rlink.request (STATUS) << endl;
-    return 1;
+    return;
     
 }

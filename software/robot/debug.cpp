@@ -2,6 +2,7 @@ void print_status(void);
 void print_parcel_type(parcel_type type);
 
 void print_status(void){
+    cout << "\n------Printing Status------\n";
     cout << "Current job: ";
     switch(status.job){
         case(COLLECTING_PARCELS):
@@ -22,7 +23,7 @@ void print_status(void){
     }
     
     if(status.travel==AT_NODE)
-        cout << "Currently: AT_NODE - " << status.current_node << endl;
+        cout << "Currently: AT_NODE - node:" << status.current_node << endl;
     else
         cout << "Currently: IN_TRANSIT between nodes " << status.last_node << " and " << status.next_node << endl;
 
@@ -31,17 +32,22 @@ void print_status(void){
     cout << "Back parcel is ";
     print_parcel_type(status.back_parcel);
     
+    cout << "---------------------------\n\n";
     return;
 }
 
 void print_route(void){
-    cout << "Printing route plan\n";
+    cout << "\n----Printing route plan----\n";
     cout << "route.starting_node = " << route.node[0] << endl;
     cout << "route.finishing_node = " << route.node[route.length] << endl;
-    cout << "    (Sanity check - status.current_node = " << status.current_node << ")\n";
+    cout << "    (Sanity check -- status.current_node = " << status.current_node << ")\n";
     cout << "Proposed route is:\n";
-    for(int i = 0; i<=route.length; i++)
-        cout << route.node[i] << " -> ";
+    for(unsigned int i = 0; i<=route.length; i++){
+        cout << route.node[i];
+        if(i<route.length)
+            cout << " -> ";
+    }
+    cout << "\n---------------------------\n";
         
     return;
 }

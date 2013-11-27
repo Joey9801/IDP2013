@@ -60,11 +60,11 @@ class robot_status {
         parcel_type front_parcel;
         parcel_type back_parcel;
         
-        unsigned char parcels_delivered;
+        int parcels_delivered;
         //Location status
-        unsigned char current_node;
-        unsigned char last_node;
-        unsigned char next_node;
+        unsigned int current_node;
+        unsigned int last_node;
+        unsigned int next_node;
         directions direction;
         
         stopwatch task_time; //Stopwatch measuring time since start of task
@@ -81,16 +81,16 @@ class robot_status {
 };
 
 struct robot_route {
-    unsigned char length; //number of "follow until junction" calls in route
+    unsigned int length; //number of "follow until junction" calls in route
                  //also equal to the largest valid index of node[]
-    unsigned char node[10];
+    unsigned int node[10];
 };
 
 
 //////////////////////////////////
 //     Function Declarations    //
 //////////////////////////////////
-int init(void);
+void init(void);
 
 //high level functions
 void set_intent(void);     //set the relevant globals declaring what we're going to do

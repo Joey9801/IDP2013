@@ -16,7 +16,7 @@ void navigate(){
         return;
     }
 
-    for(int i=1; i<=route.length; i++){
+    for(unsigned int i=1; i<=route.length; i++){
     
         status.last_node = status.current_node;
         status.next_node = route.node[i];
@@ -30,7 +30,6 @@ void navigate(){
         directions desired = idp_map[status.current_node][status.next_node];
         print_status();
         
-        cout << current << desired << endl;
         if(current==desired)
 		    turn = FORWARD;
 	    else if (current==inverse_direction[desired])
@@ -46,10 +45,21 @@ void navigate(){
 		}
         
         lf_turn(turn); //turn to face the desired node
-        lf_until_junction(); //
+        
+        #ifdef __verbose__
+            cout << "Following line to next junction\n";
+        #endif
+        
+        lf_until_junction();
+        
+        //#ifdef __verbose__
+        //    cout
         
         status.travel = AT_NODE;
         status.current_node = route.node[i];
         status.direction = inverse_direction[(idp_map[status.current_node][status.last_node])];      
     }
+    
+    cout << "\nnavigate() has finished following the route\n";
+    print_status();
 }
