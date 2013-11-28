@@ -8,28 +8,61 @@
 int main ()
 {
     //init();
-    /*
-    try{
-        init();
-    }
-    catch(idp_errors e){
-        //do something with the error
-        return;
-    }
-    */
+
     status.initialise();
     init_idp_map();
-    //demo route
-    route.node[0] = 1;
-    route.node[1] = 2;
-    route.node[2] = 9;
-    route.node[3] = 10;
-    route.node[4] = 17;
-    route.length = 4;
     
+    
+    route.node[0] = 1;
+    route.node[1] = 9;
+    route.node[2] = 10;
+    route.node[3] = 11;
+    route.node[4] = 4;
+    route.node[5] = 3;
+    route.node[6] = 4;
+    route.length = 6;
     print_route();
     navigate();
-	    
+    
+    set_arm_down();
+    set_conveyor(100);
+    delay(8000);
+    set_conveyor(0);
+    set_arm_up();
+//Mechanical Demo!!!
+/*
+
+	//lights and actuator demo
+	cout << "Lights and actuator demo\n";
+	for(int i=0; i<3; i++){
+	    rlink.command(WRITE_PORT_1, 0xFF);
+	    delay(1000);
+	    rlink.command(WRITE_PORT_1, 0x00);
+	    delay(1000);
+	}
+	
+	set_arm_up();
+	delay(2000);
+	
+	//Collection and Delivery demo
+	cout << "Collection and Delivery demo\n\n";
+	cout << "Collecting Parcels\n";
+	set_arm_down();
+	delay(1000);
+	set_conveyor(100);
+	delay(10000);
+	set_conveyor(0);
+	set_arm_up();
+	delay(1000);
+	
+	
+	cout << "Delivering Parcels\n";
+	set_conveyor(-100);
+	delay(10000);
+	set_conveyor(0);
+*/	
+	
+	
     /*status.time.start();
     while(status.time.read()<(1000*60*5)) //Spend 5 minutes on the task before quitting
     {
@@ -46,10 +79,17 @@ int main ()
     
 }
 
+void set_intent(void){
+    //set status.job
+    return;
+}
+
+
 void init(void)
 {
     status.initialise();
     init_idp_map();
+    set_arm_up();
     
     #ifdef __arm__
     if (!rlink.initialise ())
@@ -86,9 +126,6 @@ void init(void)
         //throw(ROBOT_INIT_FAIL);
         return; // error, finish
     }
-    cout << rlink.request (STATUS) << endl;
-    rlink.command (STOP_SELECT, 4);
-    cout << rlink.request (STATUS) << endl;
     return;
     
 }

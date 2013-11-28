@@ -10,7 +10,9 @@ int lf_until_junction()
         {
         case 0b000:
             //Panic case, all sensors off line
-            lf_line_recovery();
+            cout << "    lf_until_junction(): Lost the line, calling lf_line_recovery()\n";
+            if(lf_line_recovery()==-1)
+                return 1;
             break;
         case 0b111: case 0b011:
             //Both left and right high, must be at a junction
@@ -44,25 +46,25 @@ int lf_until_junction()
 int lf_turn(turning turn)
 {
     unit_forwards(); //advance such that the wheel axis is over the junction
-    char rot_speed = 100;
+    char rot_speed = 80;
     switch(turn)
     {
     case LEFT:
         #ifdef __verbose__
             cout << "    lf_turn(): Performing left turn\n";
         #endif
-        set_motors(-rot_speed, rot_speed);
-        delay(1000); //wait for the sensors to clear the line
-        while(!(get_linesensors()&0b100)); //wait for the center sensor to hit the line
+        set_motors(127+rot_speed, rot_speed);
+        delay(2500); //wait for the sensors to clear the line
+        while(!(get_linesensors()&0b010)); //wait for the center sensor to hit the line
         break;
         
     case RIGHT:
         #ifdef __verbose__
             cout << "    lf_turn(): Performing right turn\n";
         #endif
-        set_motors(rot_speed, -rot_speed);
-        delay(1000); //wait for the sensors to clear the line
-        while(!(get_linesensors()&0b100)); //wait for the centre sensor to return to the line
+        set_motors(rot_speed, 127+rot_speed);
+        delay(2500); //wait for the sensors to clear the line
+        while(!(get_linesensors()&0b001)); //wait for the centre sensor to return to the line
         break;
         
     case FORWARD:
@@ -70,15 +72,15 @@ int lf_turn(turning turn)
             cout << "    lf_turn(): Going straight on\n";
         #endif
         set_motors(rot_speed, rot_speed);
-        delay(500); //just enough to advance past the junction
+        delay(150); //just enough to advance past the junction
         break;
         
     case BACKWARD:
         #ifdef __verbose__
             cout << "    lf_turn(): Performing 180deg turn\n";
         #endif
-        set_motors(rot_speed, -rot_speed);
-        delay(3000); //to find empirically - must go past a 90 deg line if there is one
+        set_motors(rot_speed, 127+rot_speed);
+        delay(4000); //to find empirically - must go past a 90 deg line if there is one
         while(!(get_linesensors()&0b100));
         break;
         
@@ -97,7 +99,7 @@ int lf_line_recovery(void)
 //we've lost the line
 //rotate on the spot toward where the line last was
     set_motors(0, 0);
-
+    
     if(line_sensors[1]&0b001) //Left sensor before leaving was high
         set_motors(127+90, 90);
 
@@ -109,6 +111,7 @@ int lf_line_recovery(void)
         cout << "        lf_line_recovery(): line_recovery() was called at an odd time\n";
         cout << "        lf_line_recovery(): neither the right or the left sensor was high last cycle\n";
         cout << "        lf_line_recovery(): line_sensors[] are: " << line_sensors[0] << " " << line_sensors[1] << endl;
+        
         return -1;
     }
 
@@ -125,7 +128,7 @@ void unit_forwards(void)
         cout << "    unit_forwards(): Travelling a unit step forwards\n";
     #endif
     set_motors(60, 60);
-    delay(2500); //empirically found
+    delay(3100); //empirically found
     set_motors(0, 0);
     return;
 }

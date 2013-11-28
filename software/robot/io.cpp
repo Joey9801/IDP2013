@@ -20,6 +20,12 @@ char get_linesensors(void)
 
 void set_motors(signed char left_speed, signed char right_speed)
 {
+/*
+    if(left_speed<0)
+        left_speed ^= 0x7F;
+    if(right_speed<0)
+        right_speed ^= 0x7F;
+*/        
     rlink.command(MOTOR_1_GO, left_speed);
     rlink.command(MOTOR_2_GO, right_speed);
     return;
@@ -29,21 +35,25 @@ void set_motors(signed char left_speed, signed char right_speed)
 //next three functions are not complete
 void set_arm_up(void)
 {
-    //something about outputs[]
+    //something about outputs[1]
+    outputs[1] |= (1<<7);
     rlink.command(WRITE_PORT_1, outputs[1]);
     return;	
 }
 
 void set_arm_down(void)
 {
-    //something about outputs[]
+    //something about outputs[1]
+    outputs[1] &= ~(1<<7);
     rlink.command(WRITE_PORT_1, outputs[1]);
     return;	
 }
 
 void set_conveyor(signed char belt_speed)
 {
-	rlink.command(MOTOR_3_GO, belt_speed); 
+    if(belt_speed<0)
+        belt_speed ^= 0x7F;
+	rlink.command(MOTOR_4_GO, belt_speed); 
 	return;
 }
 

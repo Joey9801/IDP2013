@@ -4,9 +4,8 @@
 #include <delay.h>
 
 using namespace std;
-
 #define SPEED 127
-#define CORRECTION 30
+#define CORRECTION 65
 
 //prefix lf_ indicates part of the line_following algorithm
 int lf_until_junction(void);

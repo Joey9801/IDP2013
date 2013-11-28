@@ -55,6 +55,7 @@ void navigate(){
             cout << "navigate(): Calling lf_until_junction()\n";
         #endif
 
+
         lf_until_junction();
 
         #ifdef __verbose__

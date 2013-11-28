@@ -120,8 +120,8 @@ Bits 0-3 of val are the readings from the 4 line sensors
 The bits are high when the sensor is on the line
 Sensor allocation is currently as follows:
   bit: Thing
-    1: Left
-    2: Right
-    3: Centre
+    0: Left
+    1: Right
+    2: Centre
     4: Unallocated
 */
