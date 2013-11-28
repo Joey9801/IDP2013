@@ -15,7 +15,7 @@ void set_indicators(void){
         case BLUE:
             outputs[1] ^= (1<<2);
             break;
-        case default:
+        default:
             cout << "Warning: status.front_parcel is set to an invalid type\n";
             break;    
     }
@@ -31,7 +31,7 @@ void set_indicators(void){
         case BLUE:
             outputs[1] ^= (1<<4);
             break;
-        case default:
+        default:
             cout << "Warning: status.back_parcel is set to an invalid type\n";
             break;    
     }
