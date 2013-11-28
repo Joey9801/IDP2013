@@ -2,6 +2,43 @@
 
 void plan_route(){
     //fill in 'robot_route route' with information about the route
+    bool fail = false;
+    switch(route.end_node){
+        case 4: //Pickup node
+            switch(status.current_node){
+                default:
+                    fail = true;
+            }
+            break;
+        case 11: //Delivery node 1
+            switch(status.current_node){
+                default:
+                    fail = true;
+            }
+            break;
+        case 10: //Delivery node 2
+            switch(status.current_node){
+                default:
+                    fail = true;
+            }
+            break;
+        case 1: //Starting node - for prizes
+                //since points mean prizes
+            switch(status.current_node){
+                default:
+                    fail = true;
+            }
+            break;
+            
+        default:
+            fail = true;
+    }
+    
+    if(fail){
+        cout << "Don't know how to navigate from " << status.current_node 
+             << " to " << route.end_node << endl;
+        throw(UNKNOWN_ROUTE);
+    }
     print_route();
 }
 

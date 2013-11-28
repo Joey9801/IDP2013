@@ -103,8 +103,15 @@ int main ()
     while(status.time.read()<(1000*60*5)) //Spend 5 minutes on the task before quitting
     {
         set_intent();
-
-        plan_route(); 
+        
+        try{
+            plan_route();
+        }
+        catch(idp_errors e){
+            print_idp_error(e);
+            cout << "Cannot recover from this, exiting\n";
+            return -1;
+        }
 
         navigate(); 
 
