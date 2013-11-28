@@ -1,28 +1,61 @@
 #include "navigation.hh"
 
 void plan_route(){
+    if(route.end_node==status.current_node){
+        route.length = 0;
+        cout << "Trivial plan route -> route.end_node==status.current_node\n";
+        return;
+    }
     //fill in 'robot_route route' with information about the route
     bool fail = false;
     switch(route.end_node){
-        case 4: //Pickup node
+        case 4: //Going to Pickup node
             switch(status.current_node){
+                case 1:
+                    route.node[0] = 1;
+                    route.node[1] = 8;
+                    route.node[2] = 7;
+                    route.node[3] = 6;
+                    route.node[4] = 3;
+                    route.node[5] = 4;
+                    route.length = 5;
+                    break;
+                case 10:
+                    break;
+                case 11:
+                    break;
                 default:
                     fail = true;
             }
             break;
-        case 11: //Delivery node 1
+            
+        case 11: //Going to Delivery node 1
             switch(status.current_node){
+                case 1:
+                    break
+                case 10:
+                    break;
+                case 4:
+                    break;
                 default:
                     fail = true;
             }
             break;
-        case 10: //Delivery node 2
+            
+        case 10: //Going to Delivery node 2
             switch(status.current_node){
+                case 1:
+                    break;
+                case 11:
+                    break;
+                case 4:
+                    break;
                 default:
                     fail = true;
             }
             break;
-        case 1: //Starting node - for prizes
+            
+        case 1: //Going to Starting node - for prizes
                 //since points mean prizes
             switch(status.current_node){
                 default:
