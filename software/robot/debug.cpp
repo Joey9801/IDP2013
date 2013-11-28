@@ -157,6 +157,9 @@ void print_idp_errors(idp_errors e){
         case INVALID_DIRECTIONS:
             cout << "INVALID_DIRECTIONS\n";
             break;
+        case UNKNOWN_ROUTE:
+            cout << "UNKNOWN_ROUTE\n";
+            break;
         default:
             cout << "\nUnkown error was passed to print_idp_errors()\n";
     }
