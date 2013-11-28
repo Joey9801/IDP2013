@@ -7,7 +7,7 @@
 int main ()
 {
     try{
-        init();
+        //init();
     }
     catch(idp_errors e){
         print_idp_errors(e);
@@ -41,7 +41,7 @@ int main ()
     route.node[0] = 1;
     route.node[1] = 9;
     route.node[2] = 10;
-    route.node[3] = 4;
+    route.node[3] = 11;
     route.node[4] = 4;
     route.node[5] = 3;
     route.node[6] = 4;
@@ -116,7 +116,30 @@ int main ()
 }
 
 void set_intent(void){
-    //set status.job
+
+    if(status.front_parcel){
+        status.job = DELIVERING_PARCELS;
+        switch(status.front_parcel){
+            case RED: case GREEN:
+                route.end_node = 11;
+                route.end_direction = SOUTH;
+                break;
+            case BLUE:
+                route.end_node = 10;
+                route.end_direction = EAST;
+                break;
+            default:
+                cout << __func__ << " at line: " << __LINE__ << "failed horribly";
+                break;
+        }
+    }
+    else{
+        status.job = COLLECTING_PARCELS;
+        route.end_node = 4;
+        route.end_direction = WEST;
+    }
+    
+    print_status();
     return;
 }
 
