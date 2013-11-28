@@ -11,15 +11,27 @@ int main ()
 
     status.initialise();
     init_idp_map();
-//Testing + callibrating new motors
+
+//Test loop over course for ages
 /*	
-	delay(100);	
-	lf_until_junction();
-	lf_turn(RIGHT);
-	lf_until_junction();
+	route.node[0] = 1;
+    route.node[1] = 9;
+    route.node[2] = 10;
+    route.node[3] = 11;
+    route.node[4] = 4;
+    route.node[5] = 5;
+    route.node[6] = 6;
+	route.node[7] = 7;
+	route.node[8] = 8;
+	route.node[9] = 1;
+    route.length = 9;
+    print_route();
+    navigate();
 */
+
+
 //Test Route for collection    
-   
+  
     route.node[0] = 1;
     route.node[1] = 9;
     route.node[2] = 10;
