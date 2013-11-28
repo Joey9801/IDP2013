@@ -146,12 +146,16 @@ void print_direction(directions direction){
 }
 
 void print_idp_errors(idp_errors e){
+    cout << "Error thrown: ";
     switch(e){
         case ROBOT_INIT_FAIL:
-            cout << "ROBOT_INIT_FAIL";
+            cout << "ROBOT_INIT_FAIL\n";
             break;
         case INVALID_ROUTE:
-            cout << "INVALID_ROUTE";
+            cout << "INVALID_ROUTE\n";
+            break;
+        case INVALID_DIRECTIONS:
+            cout << "INVALID_DIRECTIONS\n";
             break;
         default:
             cout << "\nUnkown error was passed to print_idp_errors()\n";

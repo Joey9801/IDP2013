@@ -11,20 +11,18 @@ using namespace std;
 //////////////////////////////////////////
 //   Enumerated types for readability   //
 //////////////////////////////////////////
-enum idp_errors
-{
+enum idp_errors{
     ROBOT_INIT_FAIL = 1,
     INVALID_ROUTE,
+    INVALID_DIRECTIONS
     //other errors.. add here as needed
     //remember to add them to print_idp_errors();
 };
-enum travel_status
-{
+enum travel_status{
     IN_TRANSIT = 1,
     AT_NODE
 };
-enum turning
-{
+enum turning{
     LEFT = 1,
     RIGHT,
     FORWARD,
@@ -38,15 +36,13 @@ enum directions{
     SOUTH,
     WEST
 };
-enum job_status
-{
+enum job_status{
     COLLECTING_PARCELS = 1,
     TRANSPORTING_PARCELS,
     DELIVERING_PARCELS,
     NO_PARCELS
 };
-enum parcel_type
-{
+enum parcel_type{
     RED = 1,
     BLUE,
     GREEN,

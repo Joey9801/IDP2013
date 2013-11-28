@@ -6,7 +6,14 @@
 
 int main ()
 {
-    //init();
+    try{
+        init();
+    }
+    catch(idp_errors e){
+        print_idp_errors(e);
+        cout << "Cannot continue, exiting\n";
+        return -1;
+    }
 
     status.initialise();
     init_idp_map();
@@ -34,13 +41,21 @@ int main ()
     route.node[0] = 1;
     route.node[1] = 9;
     route.node[2] = 10;
-    route.node[3] = 11;
+    route.node[3] = 4;
     route.node[4] = 4;
     route.node[5] = 3;
     route.node[6] = 4;
     route.length = 6;
     print_route();
-    navigate();
+    
+    try{
+        navigate();
+    }
+    catch(idp_errors e){
+        print_idp_errors(e);
+        print_status();
+        cout << "No recovery options, exiting\n";
+    }
     
     //set_arm_down();
     //set_conveyor(100);
@@ -115,18 +130,14 @@ void init(void)
     #ifdef __arm__
     if (!rlink.initialise ())
     {
-        cout << "Cannot initialise link" << endl;
         rlink.print_errs(" ");
-        //throw(ROBOT_INIT_FAIL);
-        return;
+        throw(ROBOT_INIT_FAIL);
     }
     #else
     if (!rlink.initialise (ROBOT_NUM))
     {
-        cout << "Cannot initialise link" << endl;
         rlink.print_errs(" ");
-        //throw(ROBOT_INIT_FAIL);
-        return;
+        throw(ROBOT_INIT_FAIL);
     }
     #endif
     
@@ -138,14 +149,12 @@ void init(void)
     {
         cout << "Fatal errors on link:" << endl;
         rlink.print_errs();
-        //throw(ROBOT_INIT_FAIL);
-        return;
+        throw(ROBOT_INIT_FAIL);
     }
     else
     {
         cout << "Test failed (bad value returned)" << endl;
-        //throw(ROBOT_INIT_FAIL);
-        return; // error, finish
+        throw(ROBOT_INIT_FAIL);
     }
     return;
     

@@ -12,7 +12,7 @@ void navigate(){
         cout << "Route was planned incorrectly\n";
         cout << "Route starts at node " << route.node[0] << endl;
         cout << "But we are currently at node " << status.current_node << endl;
-        //throw(INVALID_ROUTE);
+        throw(INVALID_ROUTE);
         return;
     }
 
@@ -37,11 +37,8 @@ void navigate(){
 		    turn = RIGHT;
 	    else if((current-1==desired)|((current==1)&(desired==4)))
 		    turn = LEFT;
-	    else{
-		    cout << "navigate(): Invalid directions given\n";
-		    //throw(TURNING_ERROR);
-		    return;
-		}
+	    else
+		    throw(INVALID_DIRECTIONS);
 		
 		
 		cout << "Currently at node " << status.current_node << endl;
