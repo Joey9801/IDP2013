@@ -5,6 +5,8 @@ void plan_route(){
     print_route();
 }
 
+turning calculate_turn(directions current, directions desired);
+
 void navigate(){
 
     //check that the route has been prepared appropriatly
@@ -15,7 +17,8 @@ void navigate(){
         throw(INVALID_ROUTE);
         return;
     }
-
+    
+    turning turn;
     for(unsigned int i=1; i<=route.length; i++){
     
         status.last_node = status.current_node;
@@ -25,20 +28,15 @@ void navigate(){
         //navigate from route.node[i] to route.node[i+1]
         
         //direction logic
-        turning turn;
         directions current = status.direction;
         directions desired = idp_map[status.current_node][status.next_node];
         
-        if(current==desired)
-		    turn = FORWARD;
-	    else if (current==inverse_direction[desired])
-		    turn = BACKWARD;
-	    else if((current+1==desired)|((current==4)&(desired==1)))
-		    turn = RIGHT;
-	    else if((current-1==desired)|((current==1)&(desired==4)))
-		    turn = LEFT;
-	    else
-		    throw(INVALID_DIRECTIONS);
+        try{
+            turn = calculate_turn(current, desired);
+        }
+        catch(...){
+            throw;
+        }
 		
 		
 		cout << "Currently at node " << status.current_node << endl;
@@ -59,6 +57,27 @@ void navigate(){
         status.direction = inverse_direction[(idp_map[status.current_node][status.last_node])];      
     }
     
+    try{
+        turn = calculate_turn(status.direction, route.end_direction);
+        lf_turn(turn);
+    }
+    catch(...){
+        throw;
+    }
+    
     cout << "\nnavigate() has finished following the route\n";
     print_status();
+}
+
+turning calculate_turn(directions current, directions desired){
+    if(current==desired)
+	    return FORWARD;
+    else if (current==inverse_direction[desired])
+	    return BACKWARD;
+    else if(desired==right_of[current])
+	    return RIGHT;
+    else if(desired==left_of[current])
+	    return LEFT;
+    else
+	    throw(INVALID_DIRECTIONS);
 }

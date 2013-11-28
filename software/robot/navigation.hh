@@ -3,7 +3,13 @@ void navigate(void);
 
 void init_idp_map(void);
 
+
+//usage - left_of[NORTH] = WEST
+//      - inverse_of[NORTH] = SOUTH
+//      - etc..
 directions inverse_direction[5] = {NC, SOUTH, WEST, NORTH, EAST};
+directions left_of[5] = {NC, WEST, NORTH, EAST, SOUTH};
+directions right_of[5] = {NC, EAST, SOUTH, WEST, NORTH};
 
 //idp_map[i][j] is the direction you have to leave i to get to j
 directions idp_map[25][25]; 
