@@ -28,7 +28,6 @@ void navigate(){
         turning turn;
         directions current = status.direction;
         directions desired = idp_map[status.current_node][status.next_node];
-        print_status();
         
         if(current==desired)
 		    turn = FORWARD;
@@ -44,23 +43,19 @@ void navigate(){
 		    return;
 		}
 		
-        #ifdef __verbose__
-            cout << "navigate(): Calling lf_turn()\n";
-        #endif
-        
-        lf_turn(turn); //turn to face the desired node
-        
-        #ifdef __verbose__
-            cout << "navigate(): lf_turn(turn) finished\n";
-            cout << "navigate(): Calling lf_until_junction()\n";
-        #endif
+		
+		cout << "Currently at node " << status.current_node << endl;
+		cout << "Turning ";
+		print_turn(turn);
+		cout << " to travel to node " << status.next_node << endl;
+		
+		
+        DEBUG("Calling lf_turn()");
+        lf_turn(turn); //turn to face the desired node;
 
-
+        cout << "Finished turn, starting transit" << endl << endl;
+        DEBUG("Calling lf_until_junction()");
         lf_until_junction();
-
-        #ifdef __verbose__
-            cout << "navigate(): lf_until_junction() finished\n";
-        #endif
         
         status.travel = AT_NODE;
         status.current_node = route.node[i];

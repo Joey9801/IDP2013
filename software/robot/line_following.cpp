@@ -1,7 +1,7 @@
 #include "line_following.hh"
 
 //Follow line until junction reached
-int lf_until_junction()
+void lf_until_junction(void)
 {
     char left_speed, right_speed;
     while(!(get_linesensors()==0b111))
@@ -9,14 +9,22 @@ int lf_until_junction()
         switch(line_sensors[0])
         {
         case 0b000:
-            //Panic case, all sensors off line
-            cout << "    lf_until_junction(): Lost the line, calling lf_line_recovery()\n";
-            if(lf_line_recovery()==-1)
-                return 1;
+            //All sensors off line
+            if(line_sensors[1]&0b100){
+                cout << __func__ << ": Detected end of stub";
+                set_motors(0, 0);
+                return;
+            }
+            cout << __func__ <<  ": Lost line, calling lf_line_recovery()\n";
+            lf_line_recovery();
             break;
+            
         case 0b111: case 0b011:
             //Both left and right high, must be at a junction
+            DEBUG("Junction detected");
+            return;
             break;
+            
         case 0b100:
             //Only centre sensor high, everything is happy
             left_speed = right_speed = SPEED;
@@ -38,47 +46,41 @@ int lf_until_junction()
         set_motors(left_speed, right_speed);
     }
     set_motors(0, 0);
-    //cout << "
-    return 1;
+    return;
 }
 
 //To be called only at a junction
-int lf_turn(turning turn)
+void lf_turn(turning turn)
 {
-    unit_forwards(); //advance such that the wheel axis is over the junction
     char rot_speed = 80;
     switch(turn)
     {
     case LEFT:
-        #ifdef __verbose__
-            cout << "    lf_turn(): Performing left turn\n";
-        #endif
+        DEBUG("Performing left turn");
+        unit_forwards();
         set_motors(127+rot_speed, rot_speed);
         delay(500); //wait for the sensors to clear the line
         while(!(get_linesensors()&0b010)); //wait for the center sensor to hit the line
         break;
         
     case RIGHT:
-        #ifdef __verbose__
-            cout << "    lf_turn(): Performing right turn\n";
-        #endif
+        DEBUG("Performing right turn");
+        unit_forwards();
         set_motors(rot_speed, 127+rot_speed);
         delay(500); //wait for the sensors to clear the line
         while(!(get_linesensors()&0b001)); //wait for the centre sensor to return to the line
         break;
         
     case FORWARD:
-        #ifdef __verbose__
-            cout << "    lf_turn(): Going straight on\n";
-        #endif
-        set_motors(rot_speed, rot_speed);
+        DEBUG("Going straight on");
+        set_motors(SPEED, SPEED);
         delay(150); //just enough to advance past the junction
+        return;
         break;
         
     case BACKWARD:
-        #ifdef __verbose__
-            cout << "    lf_turn(): Performing 180deg turn\n";
-        #endif
+        DEBUG("Performing 180deg turn");
+        unit_forwards();
         set_motors(rot_speed, 127+rot_speed);
         delay(2000); //to find empirically - must go past a 90 deg line if there is one
         while(!(get_linesensors()&0b100));
@@ -90,16 +92,16 @@ int lf_turn(turning turn)
 
     }
     set_motors(0,0);
-    return 1;
+    return;
 }
 
 
-int lf_line_recovery(void)
+void lf_line_recovery(void)
 {
 //we've lost the line
 //rotate on the spot toward where the line last was
     set_motors(0, 0);
-    
+    DEBUG("Attempting to recover line");
     if(line_sensors[1]&0b001) //Left sensor before leaving was high
         set_motors(127+45, 45);
 
@@ -109,24 +111,23 @@ int lf_line_recovery(void)
     else
     {
         cout << "        lf_line_recovery(): line_recovery() was called at an odd time\n";
-        cout << "        lf_line_recovery(): neither the right or the left sensor was high last cycle\n";
+        cout << "        lf_line_recovery(): neither right nor left sensor was high last cycle\n";
         cout << "        lf_line_recovery(): line_sensors[] are: " << line_sensors[0] << " " << line_sensors[1] << endl;
         
-        return -1;
+        //throw(WRONG_LINE_RECOVERY);
+        return;
     }
 
     while(!(get_linesensors()&0b100)); //wait for centre line sensor to be high
     
     set_motors(0, 0);
-    cout << "    lf_line_recovery(): successful\n";
-    return 1;
+    cout << __func__ << ": Success\n";
+    return;
 }
 
 void unit_forwards(void)
 {
-    #ifdef __verbose__
-        cout << "    unit_forwards(): Travelling a unit step forwards\n";
-    #endif
+    DEBUG("Travelling a unit step forwards");
     set_motors(60, 60);
     delay(1550); //empirically found
     set_motors(0, 0);

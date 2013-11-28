@@ -1,5 +1,4 @@
 #include "main.hh"
-#define __verbose__
 #include "debug.cpp"
 #include "io.cpp"
 #include "line_following.cpp"
@@ -7,7 +6,7 @@
 
 int main ()
 {
-    init();
+    //init();
 
     status.initialise();
     init_idp_map();
@@ -43,11 +42,11 @@ int main ()
     print_route();
     navigate();
     
-    set_arm_down();
-    set_conveyor(100);
-    delay(8000);
-    set_conveyor(0);
-    set_arm_up();
+    //set_arm_down();
+    //set_conveyor(100);
+    //delay(8000);
+    //set_conveyor(0);
+    //set_arm_up();
 
 
 
