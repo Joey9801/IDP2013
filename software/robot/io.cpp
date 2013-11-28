@@ -3,8 +3,38 @@
 //The next two functions are not complete
 void set_indicators(void){
     outputs[1] |= 0b1110111; //set all 6 coloured led's off
-    outputs[1] ^= (1<<status.front_parcel); //These two lines will need changing/replacing
-    outputs[1] ^= (1<<status.back_parcel)<<4; //I have no idea which colours are connected to which pins atm
+    switch(status.front_parcel){
+        case NONE:
+            break;
+        case RED:
+            outputs[1] ^= (1<<0);
+            break;
+        case GREEN:
+            outputs[1] ^= (1<<1);
+            break;
+        case BLUE:
+            outputs[1] ^= (1<<2);
+            break;
+        case default:
+            cout << "Warning: status.front_parcel is set to an invalid type\n";
+            break;    
+    }
+    switch(status.back_parcel){
+        case NONE:
+            break;
+        case RED:
+            outputs[1] ^= (1<<6);
+            break;
+        case GREEN:
+            outputs[1] ^= (1<<5);
+            break;
+        case BLUE:
+            outputs[1] ^= (1<<4);
+            break;
+        case default:
+            cout << "Warning: status.back_parcel is set to an invalid type\n";
+            break;    
+    }
     rlink.command(WRITE_PORT_1, outputs[1]);
 
 }
