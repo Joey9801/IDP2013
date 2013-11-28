@@ -26,7 +26,7 @@ void set_motors(signed char left_speed, signed char right_speed)
     if(right_speed<0)
         right_speed ^= 0x7F;
 */        
-    rlink.command(MOTOR_1_GO, left_speed);
+    rlink.command(MOTOR_1_GO, 127+left_speed);
     rlink.command(MOTOR_2_GO, right_speed);
     return;
 }

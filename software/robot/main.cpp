@@ -7,12 +7,19 @@
 
 int main ()
 {
-    //init();
+    init();
 
     status.initialise();
     init_idp_map();
-    
-    
+//Testing + callibrating new motors
+/*	
+	delay(100);	
+	lf_until_junction();
+	lf_turn(RIGHT);
+	lf_until_junction();
+*/
+//Test Route for collection    
+   
     route.node[0] = 1;
     route.node[1] = 9;
     route.node[2] = 10;
@@ -29,6 +36,9 @@ int main ()
     delay(8000);
     set_conveyor(0);
     set_arm_up();
+
+
+
 //Mechanical Demo!!!
 /*
 

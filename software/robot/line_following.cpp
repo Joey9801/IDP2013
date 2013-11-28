@@ -54,7 +54,7 @@ int lf_turn(turning turn)
             cout << "    lf_turn(): Performing left turn\n";
         #endif
         set_motors(127+rot_speed, rot_speed);
-        delay(2500); //wait for the sensors to clear the line
+        delay(500); //wait for the sensors to clear the line
         while(!(get_linesensors()&0b010)); //wait for the center sensor to hit the line
         break;
         
@@ -63,7 +63,7 @@ int lf_turn(turning turn)
             cout << "    lf_turn(): Performing right turn\n";
         #endif
         set_motors(rot_speed, 127+rot_speed);
-        delay(2500); //wait for the sensors to clear the line
+        delay(500); //wait for the sensors to clear the line
         while(!(get_linesensors()&0b001)); //wait for the centre sensor to return to the line
         break;
         
@@ -80,7 +80,7 @@ int lf_turn(turning turn)
             cout << "    lf_turn(): Performing 180deg turn\n";
         #endif
         set_motors(rot_speed, 127+rot_speed);
-        delay(4000); //to find empirically - must go past a 90 deg line if there is one
+        delay(2000); //to find empirically - must go past a 90 deg line if there is one
         while(!(get_linesensors()&0b100));
         break;
         
@@ -101,10 +101,10 @@ int lf_line_recovery(void)
     set_motors(0, 0);
     
     if(line_sensors[1]&0b001) //Left sensor before leaving was high
-        set_motors(127+90, 90);
+        set_motors(127+45, 45);
 
     else if(line_sensors[1]&0b010) //Right sensor before leaving was high
-        set_motors(90, 127+90);
+        set_motors(45, 127+45);
 
     else
     {
@@ -128,7 +128,7 @@ void unit_forwards(void)
         cout << "    unit_forwards(): Travelling a unit step forwards\n";
     #endif
     set_motors(60, 60);
-    delay(3100); //empirically found
+    delay(1550); //empirically found
     set_motors(0, 0);
     return;
 }
