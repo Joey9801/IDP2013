@@ -7,7 +7,7 @@
 int main ()
 {
     try{
-        init();
+        //init();
     }
     catch(idp_errors e){
         print_idp_errors(e);
@@ -15,10 +15,10 @@ int main ()
         return -1;
     }
 
-    //status.initialise();
-    //init_idp_map();
+    status.initialise();
+    init_idp_map();
 
-//Test Route for collection    
+    //Test Route for collection    
     /*
     route.node[0] = 1;
     route.node[1] = 9;
@@ -30,6 +30,10 @@ int main ()
     route.length = 6;
     route.end_direction = NORTH;
     print_route();
+    */
+    
+    route.end_node = 4;
+    plan_route();
     
     try{
         navigate();
@@ -37,9 +41,9 @@ int main ()
     catch(idp_errors e){
         print_idp_errors(e);
         print_status();
-        cout << "No recovery options, exiting\n";
+        cout << "No recovery options, exiting\n\n\n";
     }
-    */
+    
 
 
 //Mechanical Demo!!!

@@ -3,6 +3,8 @@ void navigate(void);
 
 void init_idp_map(void);
 
+turning calculate_turn(directions current, directions desired);
+
 
 //usage - left_of[NORTH] = WEST
 //      - inverse_of[NORTH] = SOUTH

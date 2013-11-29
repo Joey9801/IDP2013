@@ -14,7 +14,7 @@ void plan_route(){
                 case 1:
                     route.node[0] = 1; //route.node = {1, 8, 7, 6, 4, 3};
                     route.node[1] = 8;
-                    route.node[2] = 7;
+                    route.node[2] = 15;
                     route.node[3] = 6;
                     route.node[4] = 3;
                     route.node[5] = 4;
@@ -72,10 +72,10 @@ void plan_route(){
              << " to " << route.end_node << endl;
         throw(UNKNOWN_ROUTE);
     }
+    
+    
     print_route();
 }
-
-turning calculate_turn(directions current, directions desired);
 
 void navigate(){
 
@@ -88,6 +88,14 @@ void navigate(){
         return;
     }
     
+    for(unsigned int i=0; i<route.length; i++){
+        if(idp_map[route.node[i]][route.node[i+1]] == NC){
+            cout << "node " << route.node[i] << " is not connected to node " << route.node[i+1] << endl;
+            throw(INVALID_ROUTE);
+        }
+    }
+    
+    cout << "Route was checked\n";
     turning turn;
     for(unsigned int i=1; i<=route.length; i++){
     

@@ -81,7 +81,7 @@ class robot_status {
 struct robot_route {
     unsigned int length; //number of "follow until junction" calls in route
                  //also equal to the largest valid index of node[]
-    unsigned int node[10];
+    unsigned int node[20];
     
     unsigned int end_node;
     directions end_direction;
