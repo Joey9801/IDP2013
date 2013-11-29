@@ -7,7 +7,7 @@
 int main ()
 {
     try{
-        //init();
+        init();
     }
     catch(idp_errors e){
         print_idp_errors(e);
@@ -15,29 +15,11 @@ int main ()
         return -1;
     }
 
-    status.initialise();
-    init_idp_map();
-
-//Test loop over course for ages
-/*	
-	route.node[0] = 1;
-    route.node[1] = 9;
-    route.node[2] = 10;
-    route.node[3] = 11;
-    route.node[4] = 4;
-    route.node[5] = 5;
-    route.node[6] = 6;
-	route.node[7] = 7;
-	route.node[8] = 8;
-	route.node[9] = 1;
-    route.length = 9;
-    print_route();
-    navigate();
-*/
-
+    //status.initialise();
+    //init_idp_map();
 
 //Test Route for collection    
-  
+    /*
     route.node[0] = 1;
     route.node[1] = 9;
     route.node[2] = 10;
@@ -46,6 +28,7 @@ int main ()
     route.node[5] = 3;
     route.node[6] = 4;
     route.length = 6;
+    route.end_direction = NORTH;
     print_route();
     
     try{
@@ -56,13 +39,7 @@ int main ()
         print_status();
         cout << "No recovery options, exiting\n";
     }
-    
-    //set_arm_down();
-    //set_conveyor(100);
-    //delay(8000);
-    //set_conveyor(0);
-    //set_arm_up();
-
+    */
 
 
 //Mechanical Demo!!!

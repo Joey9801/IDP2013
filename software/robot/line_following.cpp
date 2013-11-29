@@ -52,13 +52,13 @@ void lf_until_junction(void)
 //To be called only at a junction
 void lf_turn(turning turn)
 {
-    char rot_speed = 80;
+    
     switch(turn)
     {
     case LEFT:
         DEBUG("Performing left turn");
         unit_forwards();
-        set_motors(127+rot_speed, rot_speed);
+        set_motors(-ROT_SPEED, ROT_SPEED);
         delay(500); //wait for the sensors to clear the line
         while(!(get_linesensors()&0b010)); //wait for the center sensor to hit the line
         break;
@@ -66,7 +66,7 @@ void lf_turn(turning turn)
     case RIGHT:
         DEBUG("Performing right turn");
         unit_forwards();
-        set_motors(rot_speed, 127+rot_speed);
+        set_motors(ROT_SPEED, -ROT_SPEED);
         delay(500); //wait for the sensors to clear the line
         while(!(get_linesensors()&0b001)); //wait for the centre sensor to return to the line
         break;
@@ -81,7 +81,7 @@ void lf_turn(turning turn)
     case BACKWARD:
         DEBUG("Performing 180deg turn");
         unit_forwards();
-        set_motors(rot_speed, 127+rot_speed);
+        set_motors(ROT_SPEED, -ROT_SPEED);
         delay(2000); //to find empirically - must go past a 90 deg line if there is one
         while(!(get_linesensors()&0b100));
         break;
@@ -103,10 +103,10 @@ void lf_line_recovery(void)
     set_motors(0, 0);
     DEBUG("Attempting to recover line");
     if(line_sensors[1]&0b001) //Left sensor before leaving was high
-        set_motors(127+45, 45);
+        set_motors(-ROT_SPEED, ROT_SPEED);
 
     else if(line_sensors[1]&0b010) //Right sensor before leaving was high
-        set_motors(45, 127+45);
+        set_motors(ROT_SPEED, -ROT_SPEED);
 
     else
     {

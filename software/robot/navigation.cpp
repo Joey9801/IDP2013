@@ -12,7 +12,7 @@ void plan_route(){
         case 4: //Going to Pickup node
             switch(status.current_node){
                 case 1:
-                    route.node[0] = 1;
+                    route.node[0] = 1; //route.node = {1, 8, 7, 6, 4, 3};
                     route.node[1] = 8;
                     route.node[2] = 7;
                     route.node[3] = 6;
@@ -32,7 +32,7 @@ void plan_route(){
         case 11: //Going to Delivery node 1
             switch(status.current_node){
                 case 1:
-                    break
+                    break;
                 case 10:
                     break;
                 case 4:
@@ -109,32 +109,39 @@ void navigate(){
         }
 		
 		
-		cout << "Currently at node " << status.current_node << endl;
 		cout << "Turning ";
 		print_turn(turn);
-		cout << " to travel to node " << status.next_node << endl;
+		cout << " to reach node " << status.next_node << endl;
 		
 		
         DEBUG("Calling lf_turn()");
         lf_turn(turn); //turn to face the desired node;
 
-        cout << "Finished turn, starting transit" << endl << endl;
+        cout << "Finished turn, starting transit" << endl;
         DEBUG("Calling lf_until_junction()");
         lf_until_junction();
         
         status.travel = AT_NODE;
         status.current_node = route.node[i];
-        status.direction = inverse_direction[(idp_map[status.current_node][status.last_node])];      
+        status.direction = inverse_direction[(idp_map[status.current_node][status.last_node])];    
+        
+        cout << "Reached node " << status.current_node << endl << endl;  
     }
     
-    try{
-        turn = calculate_turn(status.direction, route.end_direction);
-        lf_turn(turn);
+    if(route.end_direction){
+        try{
+            turn = calculate_turn(status.direction, route.end_direction);
+            cout << "Making final ";
+            print_turn(turn);
+            cout << " turn to face ";
+            print_direction(route.end_direction);
+            cout << endl;
+            lf_turn(turn);
+        }
+        catch(...){
+            throw;
+        }
     }
-    catch(...){
-        throw;
-    }
-    
     cout << "\nnavigate() has finished following the route\n";
     print_status();
 }
@@ -149,5 +156,11 @@ turning calculate_turn(directions current, directions desired){
     else if(desired==left_of[current])
 	    return LEFT;
     else
+        cout << __PRETTY_FUNCTION__ << " Failed" << endl;
+        cout << "Current  = ";
+        print_direction(current);
+        cout << "\nDesired = ";
+        print_direction(desired);
+        cout << endl;
 	    throw(INVALID_DIRECTIONS);
 }
