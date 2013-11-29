@@ -15,7 +15,9 @@ enum idp_errors{
     ROBOT_INIT_FAIL = 1,
     INVALID_ROUTE,
     INVALID_DIRECTIONS,
-    UNKNOWN_ROUTE
+    UNKNOWN_ROUTE,
+    WRONG_PLACE,
+    WRONG_DIRECTION
     //other errors.. add here as needed
     //remember to add them to print_idp_errors();
 };

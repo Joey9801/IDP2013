@@ -36,19 +36,17 @@ void print_status(void){
     print_direction(status.direction);
     cout << endl;
 
-    cout << "Front parcel is ";
-    print_parcel_type(status.front_parcel);
-    cout << "Back parcel is ";
-    print_parcel_type(status.back_parcel);
-    
-    cout << "---------------------------\n\n";
+    cout << "Front parcel is "; print_parcel_type(status.front_parcel);
+    cout << "\nBack parcel is "; print_parcel_type(status.back_parcel);
+    cout << "\n---------------------------\n\n";
     return;
 }
 
 void print_route(void){
     cout << "\n----Printing route plan----\n";
-    cout << "route.starting_node = " << route.node[0] << endl;
-    cout << "route.finishing_node = " << route.node[route.length] << endl;
+    cout << "route starting node = " << route.node[0] << endl;
+    cout << "route.end_node = " << route.end_node << endl;
+    cout << "route.end_direction = "; print_direction(route.end_direction); cout << endl;
     cout << "    (Sanity check -- status.current_node = " << status.current_node << ")\n";
     cout << "Proposed route is:\n";
     for(unsigned int i = 0; i<=route.length; i++){
@@ -56,7 +54,7 @@ void print_route(void){
         if(i<route.length)
             cout << " -> ";
     }
-    cout << "\n---------------------------\n";
+    cout << "\n---------------------------\n\n";
         
     return;
 }
@@ -64,16 +62,16 @@ void print_route(void){
 void print_parcel_type(parcel_type type){
     switch(type){
         case(RED):
-            cout << "RED\n";
+            cout << "RED";
             break;
         case(GREEN):
-            cout << "GREEN\n";
+            cout << "GREEN";
             break;
         case(BLUE):
-            cout << "BLUE\n";
+            cout << "BLUE";
             break;
         case(NONE):
-            cout << "NONE\n";
+            cout << "NONE";
             break;
         default:
             cout << "\n!Attempting to print invalid parcel type!\n";
@@ -159,6 +157,12 @@ void print_idp_errors(idp_errors e){
             break;
         case UNKNOWN_ROUTE:
             cout << "UNKNOWN_ROUTE\n";
+            break;
+        case WRONG_PLACE:
+            cout << "WRONG_PLACE\n";
+            break;
+        case WRONG_DIRECTION:
+            cout << "WRONG_DIRECTION\n";
             break;
         default:
             cout << "\nUnkown error was passed to print_idp_errors()\n";

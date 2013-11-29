@@ -3,26 +3,61 @@
 void plan_route(){
     if(route.end_node==status.current_node){
         route.length = 0;
+        route.node[0] = route.end_node;
         cout << "Trivial plan route -> route.end_node==status.current_node\n";
         return;
     }
     //fill in 'robot_route route' with information about the route
     bool fail = false;
-    switch(route.end_node){
-        case 4: //Going to Pickup node
-            switch(status.current_node){
-                case 1:
-                    route.node[0] = 1; //route.node = {1, 8, 7, 6, 4, 3};
-                    route.node[1] = 8;
-                    route.node[2] = 7;
-                    route.node[3] = 6;
-                    route.node[4] = 3;
-                    route.node[5] = 4;
-                    route.length = 5;
+    unsigned int * picked_route;
+    #ifdef __verbose__
+        cout << "Planning route from " << status.current_node
+             << " to " << route.end_node << endl;
+    #endif
+    
+    switch(status.current_node){    
+        case 1:
+            switch(route.end_node){
+                case 4:
+                    picked_route = route1_4;
                     break;
                 case 10:
+                    picked_route = route1_10;
                     break;
                 case 11:
+                    picked_route = route1_11;
+                    break;
+                default:
+                    fail = true;
+            }
+            break;
+            
+        case 4:
+            switch(route.end_node){
+                case 1:
+                    picked_route = route4_1;
+                    break;
+                case 10:
+                    picked_route = route4_10;
+                    break;
+                case 11:
+                    picked_route = route4_11;
+                    break;
+                default:
+                    fail = true;
+            }
+            break;
+            
+        case 10:
+            switch(route.end_node){
+                case 1:
+                    picked_route = route10_1;
+                    break;
+                case 4:
+                    picked_route = route10_4;
+                    break;
+                case 11:
+                    picked_route = route10_11;
                     break;
                 default:
                     fail = true;
@@ -30,39 +65,21 @@ void plan_route(){
             break;
             
         case 11: //Going to Delivery node 1
-            switch(status.current_node){
+            switch(route.end_node){
                 case 1:
+                    picked_route = route11_1;
+                    break;
+                case 4:
+                    picked_route = route11_4;
                     break;
                 case 10:
-                    break;
-                case 4:
-                    break;
-                default:
-                    fail = true;
-            }
-            break;
-            
-        case 10: //Going to Delivery node 2
-            switch(status.current_node){
-                case 1:
-                    break;
-                case 11:
-                    break;
-                case 4:
+                    picked_route = route11_10;
                     break;
                 default:
                     fail = true;
             }
             break;
-            
-        case 1: //Going to Starting node - for prizes
-                //since points mean prizes
-            switch(status.current_node){
-                default:
-                    fail = true;
-            }
-            break;
-            
+
         default:
             fail = true;
     }
@@ -72,14 +89,14 @@ void plan_route(){
              << " to " << route.end_node << endl;
         throw(UNKNOWN_ROUTE);
     }
-    
-    
-    print_route();
+    for(unsigned int i=0; i<=(*picked_route); i++)
+        route.node[i] = *(picked_route+i+1);
+    route.length = *picked_route;
 }
 
 void navigate(){
 
-    //check that the route has been prepared appropriatly
+    //check the route starts where we 
     if(route.node[0] != status.current_node){
         cout << "Route was planned incorrectly\n";
         cout << "Route starts at node " << route.node[0] << endl;
@@ -88,6 +105,7 @@ void navigate(){
         return;
     }
     
+    //Check the route for continuity
     for(unsigned int i=0; i<route.length; i++){
         if(idp_map[route.node[i]][route.node[i+1]] == NC){
             cout << "node " << route.node[i] << " is not connected to node " << route.node[i+1] << endl;
@@ -95,45 +113,46 @@ void navigate(){
         }
     }
     
-    cout << "Route was checked\n";
     turning turn;
-    for(unsigned int i=1; i<=route.length; i++){
-    
-        status.last_node = status.current_node;
-        status.next_node = route.node[i];
-        status.travel = IN_TRANSIT;
+    if(route.length!=0){
+        for(unsigned int i=1; i<=route.length; i++){
         
-        //navigate from route.node[i] to route.node[i+1]
-        
-        //direction logic
-        directions current = status.direction;
-        directions desired = idp_map[status.current_node][status.next_node];
-        
-        try{
-            turn = calculate_turn(current, desired);
-        }
-        catch(...){
-            throw;
-        }
+            status.last_node = status.current_node;
+            status.next_node = route.node[i];
+            status.travel = IN_TRANSIT;
+            
+            //navigate from route.node[i] to route.node[i+1]
+            
+            //direction logic
+            directions current = status.direction;
+            directions desired = idp_map[status.current_node][status.next_node];
+            
+            try{
+                turn = calculate_turn(current, desired);
+            }
+            catch(...){
+                throw;
+            }
 		
 		
-		cout << "Turning ";
-		print_turn(turn);
-		cout << " to reach node " << status.next_node << endl;
+		    cout << "Turning ";
+		    print_turn(turn);
+		    cout << " to reach node " << status.next_node << endl;
 		
 		
-        DEBUG("Calling lf_turn()");
-        lf_turn(turn); //turn to face the desired node;
+            DEBUG("Calling lf_turn()");
+            lf_turn(turn); //turn to face the desired node;
 
-        cout << "Finished turn, starting transit" << endl;
-        DEBUG("Calling lf_until_junction()");
-        lf_until_junction();
-        
-        status.travel = AT_NODE;
-        status.current_node = route.node[i];
-        status.direction = inverse_direction[(idp_map[status.current_node][status.last_node])];    
-        
-        cout << "Reached node " << status.current_node << endl << endl;  
+            cout << "Finished turn, starting transit" << endl;
+            DEBUG("Calling lf_until_junction()");
+            lf_until_junction();
+            
+            status.travel = AT_NODE;
+            status.current_node = route.node[i];
+            status.direction = inverse_direction[(idp_map[status.current_node][status.last_node])];    
+            
+            cout << "Reached node " << status.current_node << endl << endl;  
+        }
     }
     
     if(route.end_direction){
@@ -145,13 +164,13 @@ void navigate(){
             print_direction(route.end_direction);
             cout << endl;
             lf_turn(turn);
+            status.direction = route.end_direction;
         }
         catch(...){
             throw;
         }
     }
     cout << "\nnavigate() has finished following the route\n";
-    print_status();
 }
 
 turning calculate_turn(directions current, directions desired){

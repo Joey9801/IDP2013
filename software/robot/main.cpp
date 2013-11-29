@@ -1,16 +1,18 @@
+//#define __verbose__
+
 #include "main.hh"
 #include "debug.cpp"
 #include "io.cpp"
 #include "line_following.cpp"
 #include "navigation.cpp"
 
-#define __verbose__
+#include <stdlib.h> //for rand()
 
 
 int main ()
 {
     try{
-        init();
+        //init();
     }
     catch(idp_errors e){
         print_idp_errors(e);
@@ -18,41 +20,10 @@ int main ()
         return -1;
     }
 
-    //status.initialise();
-    //init_idp_map();
-
-    //Test Route for collection    
+    status.initialise();
+    init_idp_map();
     
-    route.node[0] = 1;
-    route.node[1] = 8;
-    route.node[2] = 7;
-    route.node[3] = 19;
-    route.node[4] = 7;
-    route.node[5] = 8;
-    route.node[6] = 1;
-    route.node[7] = 9;
-    route.node[8] = 10;
-    route.node[9] = 16;
-    route.node[10] = 10;
-    route.node[11] = 9;
-    route.node[12] = 1;
-    route.length = 12;
-    route.end_direction = WEST;
-    print_route();
-    
-    //route.end_node = 4;
-    //route.end_direction = WEST;
-    //plan_route();
-    
-    try{
-        navigate();
-    }
-    catch(idp_errors e){
-        print_idp_errors(e);
-        print_status();
-        cout << "No recovery options, exiting\n\n\n";
-    }
-    
+    /*
     set_motors(40, 40);
     
     set_arm_up();
@@ -62,7 +33,7 @@ int main ()
     set_conveyor(127);
     for(;;);
     //set_conveyor(128+127);
-    
+    */
 
 
 //Mechanical Demo!!!
@@ -99,25 +70,49 @@ int main ()
 */	
 	
 	
-    /*status.time.start();
-    while(status.time.read()<(1000*60*5)) //Spend 5 minutes on the task before quitting
+    status.task_time.start();
+    while(status.task_time.read()<(1000*60*5)) //Spend 5 minutes on the task before quitting
     {
         set_intent();
-        
+    
         try{
             plan_route();
         }
         catch(idp_errors e){
-            print_idp_error(e);
-            cout << "Cannot recover from this, exiting\n";
+            print_idp_errors(e);
+            cout << "No recovery options, exiting\n\n\n";
             return -1;
         }
-
-        navigate(); 
-
-        perform_action(); 
+        
+        print_route();
+        
+        try{
+            navigate();
+        }
+        catch(idp_errors e){
+            print_idp_errors(e);
+            print_status();
+            cout << "No recovery options, exiting\n\n\n";
+            return -1;
+        }
+        
+        print_status();
+        
+        try{
+            perform_action();
+        }
+        catch(idp_errors e){
+            print_idp_errors(e);
+            print_status();
+            cout << "No recovery options, exiting\n\n\n";
+            return -1;
+        }
+        
+        print_status();
     }
-    */
+    
+    cout << "5 minutes are up, stopping\n";
+    return 0;
     //Shutdown robot properly
     
 }
@@ -145,9 +140,79 @@ void set_intent(void){
         route.end_node = 4;
         route.end_direction = WEST;
     }
-    
-    print_status();
     return;
+}
+
+void perform_action(void){
+    
+    if(status.job==COLLECTING_PARCELS){
+        //Check that we're in the right place
+        if(status.current_node!=4){
+            cout << "perform_action() was asked to collect parcels\n";
+            cout << "but status.current_node = " << status.current_node << endl;
+            throw(WRONG_PLACE);
+        }
+        if(status.direction != WEST){
+            cout << "perform_action() was asked to collect parcels\n";
+            cout << "but we're pointing " << status.direction << " instead of WEST\n";
+            throw(WRONG_DIRECTION);
+        }
+        
+        cout << "Advancing to collect parcels\n";
+        
+        set_motors(50, 50); //gently push against the delivery conveyor
+        set_arm_down();
+        set_conveyor(127);  //drawing in at max speed - damn this thing is slow
+        
+        
+        //temp code for running without colour sensor
+        delay(2000);
+        //randomly set the front and back parcels
+        status.front_parcel = static_cast<parcel_type>(rand()%3+1);
+        status.back_parcel  = static_cast<parcel_type>(rand()%3+1);
+        
+        
+        set_indicators();
+        cout << "Parcels collected\n";
+        delay(1000);   
+    }
+    else if(status.job == DELIVERING_PARCELS){
+        //Check that we're in a valid position for the job
+        if(!((status.current_node==11)|(status.current_node==10))){
+            cout << "perform_action() was asked to deliver parcels\n";
+            cout << "but status.current_node = " << status.current_node << endl;
+            throw(WRONG_PLACE);
+        }
+        if((status.current_node==11)&(status.direction!=SOUTH)){
+            cout << "perform_action() was asked to deliver parcels to D1\n";
+            cout << "but we're pointing "; print_direction(status.direction); 
+            cout << " instead of SOUTH\n";
+            throw(WRONG_DIRECTION);
+        }
+        if((status.current_node==10)&(status.direction!=EAST)){
+            cout << "perform_action() was asked to deliver parcels to D2\n";
+            cout << "but we're pointing "; print_direction(status.direction);
+            cout << " instead of EAST\n";
+            throw(WRONG_DIRECTION);
+        }
+
+        //Deliver a single parcel
+        
+        delay(1000);
+        
+        cout << "Delivered "; print_parcel_type(status.front_parcel);
+        if(status.current_node==11)
+            cout << " to D1\n";
+        else
+            cout << " to D2\n";
+            
+        delay(1000);
+        
+        status.front_parcel = status.back_parcel;
+        status.back_parcel = NONE;
+        set_indicators();
+    }
+
 }
 
 
