@@ -4,10 +4,13 @@
 #include "line_following.cpp"
 #include "navigation.cpp"
 
+#define __verbose__
+
+
 int main ()
 {
     try{
-        //init();
+        init();
     }
     catch(idp_errors e){
         print_idp_errors(e);
@@ -15,25 +18,31 @@ int main ()
         return -1;
     }
 
-    status.initialise();
-    init_idp_map();
+    //status.initialise();
+    //init_idp_map();
 
     //Test Route for collection    
-    /*
-    route.node[0] = 1;
-    route.node[1] = 9;
-    route.node[2] = 10;
-    route.node[3] = 11;
-    route.node[4] = 4;
-    route.node[5] = 3;
-    route.node[6] = 4;
-    route.length = 6;
-    route.end_direction = NORTH;
-    print_route();
-    */
     
-    route.end_node = 4;
-    plan_route();
+    route.node[0] = 1;
+    route.node[1] = 8;
+    route.node[2] = 7;
+    route.node[3] = 19;
+    route.node[4] = 7;
+    route.node[5] = 8;
+    route.node[6] = 1;
+    route.node[7] = 9;
+    route.node[8] = 10;
+    route.node[9] = 16;
+    route.node[10] = 10;
+    route.node[11] = 9;
+    route.node[12] = 1;
+    route.length = 12;
+    route.end_direction = WEST;
+    print_route();
+    
+    //route.end_node = 4;
+    //route.end_direction = WEST;
+    //plan_route();
     
     try{
         navigate();
@@ -43,6 +52,16 @@ int main ()
         print_status();
         cout << "No recovery options, exiting\n\n\n";
     }
+    
+    set_motors(40, 40);
+    
+    set_arm_up();
+    delay(1000);
+    set_arm_down();
+    delay(1000);
+    set_conveyor(127);
+    for(;;);
+    //set_conveyor(128+127);
     
 
 
@@ -136,7 +155,7 @@ void init(void)
 {
     status.initialise();
     init_idp_map();
-    set_arm_up();
+    set_arm_down();
     
     #ifdef __arm__
     if (!rlink.initialise ())

@@ -4,8 +4,9 @@
 void lf_until_junction(void)
 {
     char left_speed, right_speed;
-    while(!(get_linesensors()==0b111))
+    while(1)//!(get_linesensors()==0b111))
     {
+        get_linesensors();
         switch(line_sensors[0])
         {
         case 0b000:
@@ -16,13 +17,15 @@ void lf_until_junction(void)
                 return;
             }
             cout << __func__ <<  ": Lost line, calling lf_line_recovery()\n";
-            lf_line_recovery();
+            lf_line_recovery(ROT_SPEED);
             break;
             
         case 0b111: case 0b011:
             //Both left and right high, must be at a junction
             DEBUG("Junction detected");
-            return;
+            //if((line_sensors[1]==0b111)&(line_sensors[0]==0b111))
+                return;
+            //delay(100);
             break;
             
         case 0b100:
@@ -58,7 +61,7 @@ void lf_turn(turning turn)
     case LEFT:
         DEBUG("Performing left turn");
         unit_forwards();
-        set_motors(-ROT_SPEED, ROT_SPEED);
+        set_motors(128+ROT_SPEED, ROT_SPEED);
         delay(500); //wait for the sensors to clear the line
         while(!(get_linesensors()&0b010)); //wait for the center sensor to hit the line
         break;
@@ -66,7 +69,7 @@ void lf_turn(turning turn)
     case RIGHT:
         DEBUG("Performing right turn");
         unit_forwards();
-        set_motors(ROT_SPEED, -ROT_SPEED);
+        set_motors(ROT_SPEED, 128+ROT_SPEED);
         delay(500); //wait for the sensors to clear the line
         while(!(get_linesensors()&0b001)); //wait for the centre sensor to return to the line
         break;
@@ -75,13 +78,14 @@ void lf_turn(turning turn)
         DEBUG("Going straight on");
         set_motors(SPEED, SPEED);
         delay(150); //just enough to advance past the junction
+        get_linesensors();
         return;
         break;
         
     case BACKWARD:
         DEBUG("Performing 180deg turn");
         unit_forwards();
-        set_motors(ROT_SPEED, -ROT_SPEED);
+        set_motors(ROT_SPEED, 128+ROT_SPEED);
         delay(2000); //to find empirically - must go past a 90 deg line if there is one
         while(!(get_linesensors()&0b100));
         break;
@@ -96,17 +100,17 @@ void lf_turn(turning turn)
 }
 
 
-void lf_line_recovery(void)
+void lf_line_recovery(char rot_speed)
 {
 //we've lost the line
 //rotate on the spot toward where the line last was
     set_motors(0, 0);
     DEBUG("Attempting to recover line");
     if(line_sensors[1]&0b001) //Left sensor before leaving was high
-        set_motors(-ROT_SPEED, ROT_SPEED);
+        set_motors(128+rot_speed, rot_speed);
 
     else if(line_sensors[1]&0b010) //Right sensor before leaving was high
-        set_motors(ROT_SPEED, -ROT_SPEED);
+        set_motors(rot_speed, 128+rot_speed);
 
     else
     {

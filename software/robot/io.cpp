@@ -50,12 +50,12 @@ char get_linesensors(void)
 
 void set_motors(signed char left_speed, signed char right_speed)
 {
-
+/*
     if(left_speed<0)
         left_speed = -left_speed+128;
     if(right_speed<0)
         right_speed = -right_speed +128;
-        
+*/        
     rlink.command(MOTOR_1_GO, 128+left_speed); //motor is connected backwards
     rlink.command(MOTOR_2_GO, right_speed);
     return;

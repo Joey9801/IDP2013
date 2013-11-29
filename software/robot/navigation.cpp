@@ -14,7 +14,7 @@ void plan_route(){
                 case 1:
                     route.node[0] = 1; //route.node = {1, 8, 7, 6, 4, 3};
                     route.node[1] = 8;
-                    route.node[2] = 15;
+                    route.node[2] = 7;
                     route.node[3] = 6;
                     route.node[4] = 3;
                     route.node[5] = 4;

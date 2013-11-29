@@ -70,7 +70,7 @@ class robot_status {
         void initialise(void){
             travel = AT_NODE;
             current_node = 1;
-            direction = WEST;
+            direction = NORTH;
             front_parcel = NONE;
             back_parcel = NONE;
             parcels_delivered = 0;
@@ -113,7 +113,7 @@ robot_link rlink;
 robot_status status;
 robot_route route;
 
-char line_sensors[2];
+char line_sensors[2] = {0b100, 0b100};
 //line_sensors[0] = current readings
 //line_sensors[1] = last readings
 /*

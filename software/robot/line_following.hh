@@ -6,11 +6,11 @@
 using namespace std;
 #define SPEED 127
 #define CORRECTION 65
-#define ROT_SPEED 80
+#define ROT_SPEED 70
 
 //prefix lf_ indicates part of the line_following algorithm
 void lf_until_junction(void);
 void lf_turn(turning);
-void lf_line_recovery(void);
+void lf_line_recovery(char rot_speed);
 
 void unit_forwards(void); //travel forwards the distance between the sensors and the wheels
