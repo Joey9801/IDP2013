@@ -52,6 +52,14 @@ enum parcel_type{
     GREEN
 };  
 
+//usage - left_of[NORTH] = WEST
+//      - inverse_of[NORTH] = SOUTH
+//      - etc..
+directions inverse_direction[5] = {NC, SOUTH, WEST, NORTH, EAST};
+directions left_of[5] = {NC, WEST, NORTH, EAST, SOUTH};
+directions right_of[5] = {NC, EAST, SOUTH, WEST, NORTH};
+
+
 class robot_status {
     public:
         //Task status

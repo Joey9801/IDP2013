@@ -112,6 +112,8 @@ void navigate(){
             throw(INVALID_ROUTE);
         }
     }
+
+
     
     turning turn;
     if(route.length!=0){

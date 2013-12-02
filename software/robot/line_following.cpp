@@ -137,3 +137,23 @@ void unit_forwards(void)
     set_motors(0, 0);
     return;
 }
+//called in perform_action, taking a left/right turn to get onto line
+void reverse_to_line(turning turn)
+{
+	set_motors(128+50, 128+50);
+	delay(1000);
+	if(turn == RIGHT)
+		{	
+		set_motors(60,128+60);
+		status.direction = left_of[status.direction];
+		}
+	else
+		{
+		set_motors(128+60,60);
+		status.direction = right_of[status.direction];
+		}
+	delay(1700);
+	set_motors(80, 80);
+	while(!(get_linesensors()&0b100));
+	set_motors(0,0);
+}

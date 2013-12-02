@@ -6,12 +6,6 @@ void init_idp_map(void);
 turning calculate_turn(directions current, directions desired);
 
 
-//usage - left_of[NORTH] = WEST
-//      - inverse_of[NORTH] = SOUTH
-//      - etc..
-directions inverse_direction[5] = {NC, SOUTH, WEST, NORTH, EAST};
-directions left_of[5] = {NC, WEST, NORTH, EAST, SOUTH};
-directions right_of[5] = {NC, EAST, SOUTH, WEST, NORTH};
 
 
 //////////////////////
@@ -27,7 +21,7 @@ unsigned int route4_10[]  = {2, 4, 11, 10};
 unsigned int route4_1[]   = {5, 4, 3, 6, 7, 8, 1};
 
 unsigned int route11_4[]  = {1, 11, 4};
-unsigned int route11_10[] = {1, 11, 10};
+unsigned int route11_10[] = {3, 11, 10, 16, 10};
 unsigned int route11_1[]  = {3, 11, 10, 9, 1};
 
 unsigned int route10_1[]  = {2, 10, 9, 1};

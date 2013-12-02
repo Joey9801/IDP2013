@@ -14,3 +14,4 @@ void lf_turn(turning);
 void lf_line_recovery(char rot_speed);
 
 void unit_forwards(void); //travel forwards the distance between the sensors and the wheels
+void reverse_to_line(turning); //Reverse onto line after action at sleigh/belt
