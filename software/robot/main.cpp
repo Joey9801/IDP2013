@@ -12,7 +12,7 @@
 int main ()
 {
     try{
-        //init();
+        init();
     }
     catch(idp_errors e){
         print_idp_errors(e);
@@ -23,53 +23,21 @@ int main ()
     status.initialise();
     init_idp_map();
     
-    /*
-    set_motors(40, 40);
-    
-    set_arm_up();
-    delay(1000);
-    set_arm_down();
-    delay(1000);
-    set_conveyor(127);
-    for(;;);
-    //set_conveyor(128+127);
-    */
 
+	reverse_to_line(RIGHT);
+	lf_until_junction();
 
-//Mechanical Demo!!!
-/*
+	return 0;
 
-	//lights and actuator demo
-	cout << "Lights and actuator demo\n";
-	for(int i=0; i<3; i++){
-	    rlink.command(WRITE_PORT_1, 0xFF);
-	    delay(1000);
-	    rlink.command(WRITE_PORT_1, 0x00);
-	    delay(1000);
-	}
-	
-	set_arm_up();
-	delay(2000);
-	
-	//Collection and Delivery demo
-	cout << "Collection and Delivery demo\n\n";
-	cout << "Collecting Parcels\n";
-	set_arm_down();
-	delay(1000);
-	set_conveyor(100);
-	delay(10000);
-	set_conveyor(0);
-	set_arm_up();
-	delay(1000);
-	
-	
-	cout << "Delivering Parcels\n";
-	set_conveyor(-100);
-	delay(10000);
-	set_conveyor(0);
-*/	
-	
-	
+	set_motors(128+50, 128+50);
+	delay(800);
+	set_motors(60,128+60);
+	delay(1400);
+   	set_motors(100, 100);
+	while(!(get_linesensors()&0b100));
+	set_motors(0,0);
+	lf_until_junction();
+	/*
     status.task_time.start();
     while(status.task_time.read()<(1000*60*5)) //Spend 5 minutes on the task before quitting
     {
@@ -109,8 +77,8 @@ int main ()
         }
         
         print_status();
-    }
-    
+    }*/
+
     cout << "5 minutes are up, stopping\n";
     return 0;
     //Shutdown robot properly
@@ -174,7 +142,9 @@ void perform_action(void){
         
         set_indicators();
         cout << "Parcels collected\n";
-        delay(1000);   
+        delay(1000);
+
+   
     }
     else if(status.job == DELIVERING_PARCELS){
         //Check that we're in a valid position for the job
