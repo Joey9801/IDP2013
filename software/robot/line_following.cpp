@@ -3,6 +3,11 @@
 //Follow line until junction reached
 void lf_until_junction(void)
 {
+    #ifdef __virtual__
+        cout << __PRETTY_FUNCTION__ << " was called\n";
+        delay(1000);
+        return;
+    #endif
     char left_speed, right_speed;
     while(1)//!(get_linesensors()==0b111))
     {
@@ -55,7 +60,12 @@ void lf_until_junction(void)
 //To be called only at a junction
 void lf_turn(turning turn)
 {
-    
+    #ifdef __virtual__
+        cout << __PRETTY_FUNCTION__ << " was called with argument ";
+        print_turn(turn); cout << endl;
+        delay(1000);
+        return;
+    #endif
     switch(turn)
     {
     case LEFT:
@@ -102,6 +112,11 @@ void lf_turn(turning turn)
 
 void lf_line_recovery(char rot_speed)
 {
+    #ifdef __virtual__
+        cout << __PRETTY_FUNCTION__ << " was called with argument " << int(rot_speed) << endl;
+        delay(1000);
+        return;
+    #endif
 //we've lost the line
 //rotate on the spot toward where the line last was
     set_motors(0, 0);
@@ -131,6 +146,11 @@ void lf_line_recovery(char rot_speed)
 
 void unit_forwards(void)
 {
+    #ifdef __virtual__
+        cout << __PRETTY_FUNCTION__ << "was called\n";
+        delay(1000);
+        return;
+    #endif
     DEBUG("Travelling a unit step forwards");
     set_motors(60, 60);
     delay(1550); //empirically found
@@ -140,6 +160,12 @@ void unit_forwards(void)
 //called in perform_action, taking a left/right turn to get onto line
 void reverse_to_line(turning turn)
 {
+    #ifdef __virtual__
+        cout << __PRETTY_FUNCTION__ << "was called with argument ";
+        print_turn(turn); cout << endl;
+        delay(1000);
+        return;
+    #endif
 	set_motors(128+50, 128+50);
 	delay(1000);
 	if(turn == RIGHT)

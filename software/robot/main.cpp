@@ -1,5 +1,5 @@
-//#define __verbose__
-
+//#define __verbose__ //enables the DEBUG("") lines
+#define __virtual__ //doesn't actually try to communicate with the robot
 #include "main.hh"
 #include "debug.cpp"
 #include "io.cpp"
@@ -12,18 +12,23 @@
 int main ()
 {
     try{
+        #ifndef __virtual__
         init();
+        #else
+        cout << "\n\n----------------------------------\n";
+        cout << "|   Initialising virtual robot   |\n";
+        cout << "----------------------------------\n\n";
+        status.initialise();
+        init_idp_map();
+        #endif
     }
     catch(idp_errors e){
         print_idp_errors(e);
         cout << "Cannot continue, exiting\n";
         return -1;
     }
-
-    status.initialise();
-    init_idp_map();
     
-
+    lf_line_recovery(100);
 	reverse_to_line(RIGHT);
 	lf_until_junction();
 
