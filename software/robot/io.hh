@@ -8,6 +8,8 @@ using namespace std;
 //   low level interface functions   //
 ///////////////////////////////////////
 char get_linesensors(void); //update line_sensors[], also return the current sensor values
+parcel_type get_coloursensor(void);
+
 
 //set the main driving motors
 void set_motors(signed char left_speed, signed char right_speed);

@@ -1,5 +1,7 @@
 #include "io.hh"
 
+#include <bitset>
+
 //The next two functions are not complete
 void set_indicators(void){
     outputs[1] |= 0b1110111; //set all 6 coloured led's off
@@ -48,14 +50,31 @@ char get_linesensors(void)
     return val;
 }
 
+parcel_type get_coloursensor(void){
+    char val = rlink.request(READ_PORT_0);
+    
+    val = val&(0b111<<4);
+    if(val){
+        if(val&(1<<4))
+            return RED;
+        if(val&(1<<5))
+            return BLUE;
+        if(val&(1<<6))
+            return GREEN;
+    }
+    return NONE;
+        
+    
+}
+
 void set_motors(signed char left_speed, signed char right_speed)
 {
-/*
+
     if(left_speed<0)
         left_speed = -left_speed+128;
     if(right_speed<0)
         right_speed = -right_speed +128;
-*/        
+      
     rlink.command(MOTOR_1_GO, 128+left_speed); //motor is connected backwards
     rlink.command(MOTOR_2_GO, right_speed);
     return;
