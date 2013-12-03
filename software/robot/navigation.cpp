@@ -138,6 +138,7 @@ void navigate() {
             //If starting node is belt/sleigh, reverse robot onto line before continuing
             if( (status.current_node==4 || status.current_node==11 || status.current_node==10) && i=1) {
                 reverse_to_line(turn);
+				lf_until_junction();
                 continue;
             }
 
