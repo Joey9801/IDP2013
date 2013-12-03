@@ -1,5 +1,5 @@
 //#define __verbose__ //enables the DEBUG("") lines
-#define __virtual__ //doesn't actually try to communicate with the robot
+//#define __virtual__ //doesn't actually try to communicate with the robot
 #include "main.hh"
 #include "debug.cpp"
 #include "io.cpp"
@@ -28,21 +28,6 @@ int main ()
         return -1;
     }
     
-    lf_line_recovery(100);
-	reverse_to_line(RIGHT);
-	lf_until_junction();
-
-	return 0;
-
-	set_motors(128+50, 128+50);
-	delay(800);
-	set_motors(60,128+60);
-	delay(1400);
-   	set_motors(100, 100);
-	while(!(get_linesensors()&0b100));
-	set_motors(0,0);
-	lf_until_junction();
-	/*
     status.task_time.start();
     while(status.task_time.read()<(1000*60*5)) //Spend 5 minutes on the task before quitting
     {
@@ -82,7 +67,7 @@ int main ()
         }
         
         print_status();
-    }*/
+    }
 
     cout << "5 minutes are up, stopping\n";
     return 0;
@@ -143,7 +128,6 @@ void perform_action(void){
         //randomly set the front and back parcels
         status.front_parcel = static_cast<parcel_type>(rand()%3+1);
         status.back_parcel  = static_cast<parcel_type>(rand()%3+1);
-        
         
         set_indicators();
         cout << "Parcels collected\n";

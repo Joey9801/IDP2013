@@ -17,9 +17,9 @@ void lf_until_junction(void)
         case 0b000:
             //All sensors off line
             if(line_sensors[1]&0b100){
-                cout << __func__ << ": Detected end of stub";
-                set_motors(0, 0);
-                return;
+                //cout << __func__ << ": Detected end of stub";
+                //set_motors(0, 0);
+                //return;
             }
             cout << __func__ <<  ": Lost line, calling lf_line_recovery()\n";
             lf_line_recovery(ROT_SPEED);
@@ -71,16 +71,18 @@ void lf_turn(turning turn)
     case LEFT:
         DEBUG("Performing left turn");
         unit_forwards();
-        set_motors(128+ROT_SPEED, ROT_SPEED);
-        delay(500); //wait for the sensors to clear the line
+        set_motors(128+127, 127);
+        delay(800); //wait for the sensors to clear the line
+        set_motors(128+20, 20);
         while(!(get_linesensors()&0b010)); //wait for the center sensor to hit the line
         break;
         
     case RIGHT:
         DEBUG("Performing right turn");
         unit_forwards();
-        set_motors(ROT_SPEED, 128+ROT_SPEED);
-        delay(500); //wait for the sensors to clear the line
+        set_motors(127, 128+127);
+        delay(800); //wait for the sensors to clear the line
+        set_motors(20, 128+20);
         while(!(get_linesensors()&0b001)); //wait for the centre sensor to return to the line
         break;
         
@@ -153,7 +155,7 @@ void unit_forwards(void)
     #endif
     DEBUG("Travelling a unit step forwards");
     set_motors(60, 60);
-    delay(1550); //empirically found
+    delay(1350); //empirically found
     set_motors(0, 0);
     return;
 }
