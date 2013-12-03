@@ -4,15 +4,22 @@
 
 #include <avr/io.h>
 #include <util/delay.h>
-//#include <avr/eeprom.h>
-#include <math.h>
+
 #include "adc.c"
 
 void init(void);
 void calibrate(void);
 void read_RGBD(int samples);
 
-int measured[3]; //last readings [G, R, B]
+enum types{
+	GREEN = 0,
+	RED,
+	BLUE,
+	NONE
+};
+
+
+long int measured[3]; //last readings [G, R, B]
 int dark;
 //char calibrations[3]; //calibration multipliers (from eeprom + last calibration)
 int working; //working value during the measurements
@@ -23,35 +30,60 @@ int ii; //iterating variables
 
 int main(void)
 {
-    init();
+	enum types max, min;
+	unsigned char out;
+	init();
     for(;;)
     {
-        read_RGBD(8);
-        
-        measured[0] =measured[0]*1;    //G
-        measured[1] =measured[1]*1;    //B
-        measured[2] =measured[2]*1;    //R
-        
-        /*
-        float hue = 10;
-        hue = atan2(1.1732*(measured[0]-measured[1]), 2*(measured[2]-measured[1]-measured[0]))*57.296;
-        if((hue>1.05)&&(hue<3.14))
-            PORTB = (PORTB&0xF8)|(1<<0);
-        else if((hue>3.14)&&(hue<5.24))
-            PORTB = (PORTB&0xF8)|(1<<1);
+        read_RGBD(10);
+		
+		if((measured[GREEN]<measured[RED])&&(measured[GREEN]<measured[BLUE]))
+            min = GREEN;
+        else if(measured[RED]<measured[BLUE])
+			min = RED;
         else
-            PORTB = (PORTB&0xF8)|(1<<2);
-        */
-        
+			min = BLUE;
+			
+		
+		
         //disregard special things for the moment
         //just pick the biggest
-        if((measured[0]>measured[1])&&(measured[0]>measured[2]))
-            PORTB = (PORTB&0xF8)|(1<<0);
-        else if(measured[1]>measured[2])
-            PORTB = (PORTB&0xF8)|(1<<1);
-        else
-            PORTB = (PORTB&0xF8)|(1<<2);
-        
+        if((measured[GREEN]>measured[RED])&&(measured[GREEN]>measured[BLUE])){
+			max = GREEN;
+			out = (1<<0);
+			}
+        else if(measured[RED]>measured[BLUE]){
+			out = (1<<1);
+			max = RED;
+			}
+		else{
+			out = (1<<2);
+			max = BLUE;
+			}
+		
+		if((measured[max]*90) <= (measured[min]*100))
+			out = 0;
+		
+		PORTB = out;
+		
+		/*
+		switch(type){
+			case 3:
+				PORTB = (PORTB&0xF8);
+				break;
+			case 2:
+				PORTB = (PORTB&0xF8)|(1<<2);
+				break;
+			case 1:
+				PORTB = (PORTB&0xF8)|(1<<1);
+				break;
+			case 0:
+				PORTB = (PORTB&0xF8)|(1<<0);
+				break;
+			default:
+				break;
+		}
+        */
     }
     return 0;
 }
@@ -92,12 +124,14 @@ void read_RGBD(int samples)
     PORTA = PORTA&0xF8; //get a dark reading
     working = 0;
     _delay_ms(1); //let things settle
-    for(ii=0; ii<samples; ii++) //take n readings
+    /*
+	for(ii=0; ii<samples; ii++) //take n readings
     {
         dark += read_adc(0b011);
     }
     //dark = working/samples;
-
+	*/
+	
     for(i=0; i<3; i++)
     {
         working = 0;
@@ -105,7 +139,7 @@ void read_RGBD(int samples)
         _delay_ms(1); //delay to let everything settle
         for(ii=0; ii<samples; ii++) //take n readings
         {
-            measured[i] += read_adc(0b011) - dark;
+            measured[i] += read_adc(0b011);// - dark;
         }
         //measured[i] = working/samples; //adjust for 'things'
     }
