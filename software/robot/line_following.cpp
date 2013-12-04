@@ -66,6 +66,25 @@ void lf_turn(turning turn)
         delay(1000);
         return;
     #endif
+    
+    bool reverse = false;
+    unsigned int node = status.current_node;
+    directions dir = status.direction;
+    if((node==4)&&(dir==WEST))
+        reverse = true;
+    else if((node==11)&&(dir==SOUTH))
+        reverse = true;
+    else if((node==10)&&(dir==EAST))
+        reverse = true;
+    if((turn==FORWARD)|(turn==BACKWARD))
+        reverse=false;
+    
+    if(reverse){
+        cout << "reverse to turn called\n";
+        reverse_to_line(turn);
+        return; //don't do another turn
+    }
+    
     switch(turn)
     {
     case LEFT:
@@ -74,7 +93,7 @@ void lf_turn(turning turn)
         set_motors(128+127, 127);
         delay(800); //wait for the sensors to clear the line
         set_motors(128+20, 20);
-        while(!(get_linesensors()&0b010)); //wait for the center sensor to hit the line
+        while(!(get_linesensors()&0b100)); //wait for the center sensor to hit the line
         break;
         
     case RIGHT:
@@ -83,7 +102,7 @@ void lf_turn(turning turn)
         set_motors(127, 128+127);
         delay(800); //wait for the sensors to clear the line
         set_motors(20, 128+20);
-        while(!(get_linesensors()&0b001)); //wait for the centre sensor to return to the line
+        while(!(get_linesensors()&0b100)); //wait for the centre sensor to return to the line
         break;
         
     case FORWARD:
@@ -97,8 +116,9 @@ void lf_turn(turning turn)
     case BACKWARD:
         DEBUG("Performing 180deg turn");
         unit_forwards();
-        set_motors(ROT_SPEED, 128+ROT_SPEED);
-        delay(2000); //to find empirically - must go past a 90 deg line if there is one
+        set_motors(127, 128+127);
+        delay(1800); //to find empirically - must go past a 90 deg line if there is one
+        set_motors(20, 128+20);
         while(!(get_linesensors()&0b100));
         break;
         
@@ -155,7 +175,7 @@ void unit_forwards(void)
     #endif
     DEBUG("Travelling a unit step forwards");
     set_motors(60, 60);
-    delay(1350); //empirically found
+    delay(1400); //empirically found
     set_motors(0, 0);
     return;
 }
@@ -173,12 +193,10 @@ void reverse_to_line(turning turn)
 	if(turn == RIGHT)
 		{	
 		set_motors(60,128+60);
-		status.direction = left_of[status.direction];
 		}
 	else
 		{
 		set_motors(128+60,60);
-		status.direction = right_of[status.direction];
 		}
 	delay(1700);
 	set_motors(80, 80);

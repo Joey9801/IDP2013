@@ -28,6 +28,9 @@ int main ()
         return -1;
     }
     
+    //status.current_node = 4;
+    //status.direction = WEST;
+
     status.task_time.start();
     while(status.task_time.read()<(1000*60*5)) //Spend 5 minutes on the task before quitting
     {
@@ -86,7 +89,7 @@ void set_intent(void){
                 break;
             case BLUE:
                 route.end_node = 10;
-                route.end_direction = EAST;
+                route.end_direction = WEST;
                 break;
             default:
                 cout << __func__ << " at line: " << __LINE__ << "failed horribly";
@@ -116,23 +119,51 @@ void perform_action(void){
             throw(WRONG_DIRECTION);
         }
         
+        
         cout << "Advancing to collect parcels\n";
         
-        set_motors(50, 50); //gently push against the delivery conveyor
+        set_request(true);
+        
+        set_motors(40, 40); //gently push against the delivery conveyor
         set_arm_down();
-        set_conveyor(127);  //drawing in at max speed - damn this thing is slow
-        
-        
-        //temp code for running without colour sensor
-        delay(2000);
-        //randomly set the front and back parcels
-        status.front_parcel = static_cast<parcel_type>(rand()%3+1);
-        status.back_parcel  = static_cast<parcel_type>(rand()%3+1);
-        
-        set_indicators();
-        cout << "Parcels collected\n";
         delay(1000);
+        set_conveyor(127);  //drawing in at max speed - damn this thing is slow
+ 
+        int i = 0;
 
+        while(i<5){
+            if(get_coloursensor()!=NONE)
+                i++;
+            else
+                i=0;
+            delay(100);
+        }
+        
+        status.back_parcel = get_coloursensor();
+        set_indicators();
+        
+        delay(4000);
+
+        i=0;
+        while(i<5){
+            if(get_coloursensor()!=NONE)
+                i++;
+            else
+                i=0;
+            delay(100);
+        }
+        
+        status.front_parcel = get_coloursensor();
+        set_indicators();
+
+        delay(5000); //wait for the parcels to get all the way on.
+        set_conveyor(0);
+        set_motors(0, 0);
+        
+        set_request(false);
+        
+        set_arm_up();
+        cout << "Parcels collected\n";
    
     }
     else if(status.job == DELIVERING_PARCELS){
@@ -148,14 +179,30 @@ void perform_action(void){
             cout << " instead of SOUTH\n";
             throw(WRONG_DIRECTION);
         }
-        if((status.current_node==10)&(status.direction!=EAST)){
+        if((status.current_node==10)&(status.direction!=WEST)){
             cout << "perform_action() was asked to deliver parcels to D2\n";
             cout << "but we're pointing "; print_direction(status.direction);
-            cout << " instead of EAST\n";
+            cout << " instead of WEST\n";
             throw(WRONG_DIRECTION);
         }
 
+        if(status.current_node==10){
+            unit_forwards();
+            unit_forwards();
+            lf_turn(BACKWARD);
+            status.direction = EAST;
+            lf_until_junction();            
+        }
+        
+        
         //Deliver a single parcel
+        
+        set_motors(40, 40); //gently push
+        set_arm_up();
+        set_conveyor(128+127);
+        delay(9000); //change this
+        
+        set_motors(0, 0);
         
         delay(1000);
         
@@ -180,6 +227,8 @@ void init(void)
     status.initialise();
     init_idp_map();
     set_arm_down();
+    set_indicators();
+    set_request(false);
     
     #ifdef __arm__
     if (!rlink.initialise ())

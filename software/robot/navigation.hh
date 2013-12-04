@@ -13,20 +13,20 @@ turning calculate_turn(directions current, directions desired);
 //////////////////////
 //First element is the length of the route
 unsigned int route1_4[]   = {5, 1, 8, 7, 6, 3, 4};
-unsigned int route1_11[]  = {3, 1, 9, 10, 11};
+unsigned int route1_11[]  = {5, 1, 9, 10, 11, 12, 11};
 unsigned int route1_10[]  = {2, 1, 9, 10};
 
-unsigned int route4_11[]  = {1, 4, 11};
+unsigned int route4_11[]  = {3, 4, 11, 12, 11};
 unsigned int route4_10[]  = {2, 4, 11, 10};
 unsigned int route4_1[]   = {5, 4, 3, 6, 7, 8, 1};
 
-unsigned int route11_4[]  = {1, 11, 4};
-unsigned int route11_10[] = {3, 11, 10, 16, 10};
+unsigned int route11_4[]  = {3, 11, 4, 3, 4};
+unsigned int route11_10[] = {1, 11, 10};
 unsigned int route11_1[]  = {3, 11, 10, 9, 1};
 
 unsigned int route10_1[]  = {2, 10, 9, 1};
-unsigned int route10_11[] = {1, 10, 11};
-unsigned int route10_4[]  = {2, 10, 11, 4};
+unsigned int route10_11[] = {3, 10, 11, 12, 11};
+unsigned int route10_4[]  = {4, 10, 11, 4, 3, 4};
 
 
 

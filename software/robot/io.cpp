@@ -46,6 +46,14 @@ void set_indicators(void){
     #endif
 }
 
+void set_request(bool on){
+    if(on)
+        outputs[1] &= ~(1<<3);
+    else
+        outputs[1] |= (1<<3);
+    rlink.command(WRITE_PORT_1, outputs[1]);
+}
+
 char get_linesensors(void)
 {
     #ifndef __virtual__
@@ -123,8 +131,8 @@ void set_conveyor(signed char belt_speed)
     #ifdef __virtual__
     return;
     #endif
-    if(belt_speed<0)
-        belt_speed ^= 0x7F;
+    //if(belt_speed<0)
+    //    belt_speed ^= 0x7F;
 	rlink.command(MOTOR_4_GO, belt_speed); 
 	return;
 }

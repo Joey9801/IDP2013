@@ -9,6 +9,7 @@ using namespace std;
 ///////////////////////////////////////
 char get_linesensors(void); //update line_sensors[], also return the current sensor values
 parcel_type get_coloursensor(void);
+void set_request(bool);
 
 
 //set the main driving motors
