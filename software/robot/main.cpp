@@ -1,16 +1,14 @@
 //#define __verbose__ //enables the DEBUG("") lines
-#define __virtual__ //doesn't actually try to communicate with the robot
+//#define __virtual__ //doesn't actually try to communicate with the robot
 #include "main.hh"
 #include "debug.cpp"
 #include "io.cpp"
 #include "line_following.cpp"
 #include "navigation.cpp"
 
-#include <stdlib.h> //for rand()
-
-void collection_test(void);
-
-
+#ifdef __oh_crap_the_colour_sensor__
+    #include <stdlib.h> //for rand()
+#endif
 
 int main ()
 {
@@ -32,7 +30,7 @@ int main ()
     }
 
     status.task_time.start();
-    while(status.task_time.read()<(1000*60*5)) //Spend 5 minutes on the task before quitting
+    while((status.task_time.read()<(1000*60*5))&(status.parcels_delivered<8)) //Spend 5 minutes on the task before quitting
     {
         set_intent();
     
@@ -72,6 +70,7 @@ int main ()
         print_status();
     }
 
+
     cout << "5 minutes are up, stopping\n";
     return 0;
     //Shutdown robot properly
@@ -89,7 +88,7 @@ void set_intent(void){
                 break;
             case BLUE:
                 route.end_node = 10;
-                route.end_direction = WEST;
+                route.end_direction = EAST;
                 break;
             default:
                 cout << __func__ << " at line: " << __LINE__ << "failed horribly";
@@ -124,10 +123,22 @@ void perform_action(void){
     
         set_request(true);
         
-        //set_motors(40, 40); //gently push against the delivery conveyor
+        set_motors(40, 40); //gently push against the delivery conveyor
         set_arm_down();
         delay(1000);
         set_conveyor(127);  //drawing in at max speed - damn this thing is slow
+
+        #ifdef __oh_crap_the_colour_sensor__
+            delay(15000);
+            status.front_parcel = static_cast<parcel_type>(rand()%3+1);
+            status.back_parcel  = static_cast<parcel_type>(rand()%3+1);
+            set_indicators();
+            set_conveyor(0);
+            set_motors(0, 0);
+            set_arm_up();
+            return;
+        #endif
+
 
         int i = 0;
 
@@ -159,7 +170,7 @@ void perform_action(void){
 
         delay(3000); //wait for the parcels to get all the way on.
         set_conveyor(0);
-        //set_motors(0, 0);
+        set_motors(0, 0);
         
         set_request(false);
         
@@ -180,13 +191,13 @@ void perform_action(void){
             cout << " instead of SOUTH\n";
             throw(WRONG_DIRECTION);
         }
-        if((status.current_node==10)&(status.direction!=WEST)){
+        if((status.current_node==10)&(status.direction!=EAST)){
             cout << "perform_action() was asked to deliver parcels to D2\n";
             cout << "but we're pointing "; print_direction(status.direction);
-            cout << " instead of WEST\n";
+            cout << " instead of EAST\n";
             throw(WRONG_DIRECTION);
         }
-
+        /*
         if(status.current_node==10){
             unit_forwards();
             unit_forwards();
@@ -194,6 +205,7 @@ void perform_action(void){
             status.direction = EAST;
             lf_until_junction();            
         }
+        */
         
         
         //Deliver a single parcel
@@ -201,20 +213,20 @@ void perform_action(void){
         set_motors(40, 40); //gently push
         set_arm_up();
         set_conveyor(128+127);
-        delay(9000); //change this
+        
+        
+        delay(8500); //change this
         
         set_motors(0, 0);
-        
-        delay(1000);
+        set_conveyor(0);        
         
         cout << "Delivered "; print_parcel_type(status.front_parcel);
         if(status.current_node==11)
             cout << " to D1\n";
         else
             cout << " to D2\n";
-            
-        delay(1000);
-        
+
+        status.parcels_delivered++;
         status.front_parcel = status.back_parcel;
         status.back_parcel = NONE;
         set_indicators();
@@ -262,54 +274,4 @@ void init(void)
     }
     return;
     
-}
-
-
-void collection_test(void){
-    cout << "Advancing to collect parcels\n";
-    
-    set_request(true);
-    
-    //set_motors(40, 40); //gently push against the delivery conveyor
-    set_arm_down();
-    delay(1000);
-    set_conveyor(127);  //drawing in at max speed - damn this thing is slow
-
-    int i = 0;
-
-    while(i<5){
-        if(get_coloursensor()!=NONE)
-            i++;
-        else
-            i=0;
-        delay(100);
-    }
-    
-    status.back_parcel = get_coloursensor();
-    set_indicators();
-    
-    delay(4000);
-
-    return;
-    i=0;
-    while(i<5){
-        if(get_coloursensor()!=NONE)
-            i++;
-        else
-            i=0;
-        delay(100);
-    }
-    
-    status.front_parcel = get_coloursensor();
-    set_indicators();
-
-    delay(3000); //wait for the parcels to get all the way on.
-    set_conveyor(0);
-    //set_motors(0, 0);
-    
-    set_request(false);
-    
-    set_arm_up();
-    cout << "Parcels collected\n";
-
 }

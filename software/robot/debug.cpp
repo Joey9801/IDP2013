@@ -38,6 +38,7 @@ void print_status(void){
 
     cout << "Front parcel is "; print_parcel_type(status.front_parcel);
     cout << "\nBack parcel is "; print_parcel_type(status.back_parcel);
+    cout << "\nDelivered " << status.parcels_delivered << " parcels\n";
     cout << "\n---------------------------\n\n";
     return;
 }
