@@ -69,11 +69,11 @@ char get_linesensors(void)
 
 parcel_type get_coloursensor(void){
     char val;
-    #ifndef __virtual__
-    val = rlink.request(READ_PORT_0);
-    #else
+    //#ifndef __virtual__
+    //val = rlink.request(READ_PORT_0);
+    //#else
     return static_cast<parcel_type>(rand()%3+1);
-    #endif
+    //#endif
     val = val&(0b111<<4);
     if(val){
         if(val&(1<<4))

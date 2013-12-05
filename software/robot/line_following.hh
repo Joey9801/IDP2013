@@ -5,7 +5,7 @@
 
 using namespace std;
 #define SPEED 127
-#define CORRECTION 65
+#define CORRECTION 75
 #define ROT_SPEED 70
 
 //prefix lf_ indicates part of the line_following algorithm
