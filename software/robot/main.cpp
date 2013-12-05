@@ -10,6 +10,8 @@
     #include <stdlib.h> //for rand()
 #endif
 
+void test_collection(void);
+
 int main ()
 {
     try{
@@ -274,4 +276,66 @@ void init(void)
     }
     return;
     
+}
+
+void test_collection(void){
+    cout << "Advancing to collect parcels\n";
+    
+    set_request(true);
+    
+    set_motors(40, 40); //gently push against the delivery conveyor
+    set_arm_down();
+    delay(1000);
+    set_conveyor(127);  //drawing in at max speed - damn this thing is slow
+
+    #ifdef __oh_crap_the_colour_sensor__
+        delay(15000);
+        status.front_parcel = static_cast<parcel_type>(rand()%3+1);
+        status.back_parcel  = static_cast<parcel_type>(rand()%3+1);
+        set_indicators();
+        set_conveyor(0);
+        set_motors(0, 0);
+        set_arm_up();
+        return;
+    #endif
+
+
+    int i = 0;
+
+    while(i<5){
+        if(get_coloursensor()!=NONE)
+            i++;
+        else
+            i=0;
+        delay(100);
+    }
+    
+    status.back_parcel = get_coloursensor();
+    set_indicators();
+    
+    delay(4000);
+
+    return;
+    i=0;
+    while(i<5){
+        if(get_coloursensor()!=NONE)
+            i++;
+        else
+            i=0;
+        delay(100);
+    }
+    
+    status.front_parcel = get_coloursensor();
+    set_indicators();
+
+    delay(3000); //wait for the parcels to get all the way on.
+    set_conveyor(0);
+    set_motors(0, 0);
+    
+    set_request(false);
+    
+    set_arm_up();
+    cout << "Parcels collected\n";
+
+    reverse_to_line(LEFT);
 }
