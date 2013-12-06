@@ -45,6 +45,7 @@ void plan_route() {
             break;
         case 9:
             picked_route = route4_9;
+            break;
         default:
             fail = true;
         }
@@ -63,6 +64,7 @@ void plan_route() {
             break;
         case 8:
             picked_route = route10_8;
+            break;
         default:
             fail = true;
         }
@@ -81,6 +83,7 @@ void plan_route() {
             break;
         case 8:
             picked_route = route11_8;
+            break;
         default:
             fail = true;
         }
