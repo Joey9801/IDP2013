@@ -28,6 +28,9 @@ unsigned int route10_1[]  = {2, 10, 9, 1};
 unsigned int route10_11[] = {1, 10, 11};//, 12, 11};
 unsigned int route10_4[]  = {4, 10, 11, 4, 3, 4};
 
+unsigned int route4_9[]   = {6, 4, 3, 6, 7, 8, 1, 9};
+unsigned int route10_8[]  = {3, 10, 1, 9, 8};
+unsigned int route11_8[]  = {4, 11, 10, 9, 1, 8};
 
 
 //idp_map[i][j] is the direction you have to leave i to get to j

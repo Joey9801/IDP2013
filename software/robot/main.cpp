@@ -72,8 +72,38 @@ int main ()
         print_status();
     }
 
-
-    cout << "5 minutes are up, stopping\n";
+    if(status.current_node == 4)
+        route.end_node = 9;
+    else
+        route.end_node = 8;
+    route.end_direction = NC;
+    
+    try{
+        plan_route();
+    }
+    catch(idp_errors e){
+        print_idp_errors(e);
+        cout << "No recovery options, exiting\n\n\n";
+        return -1;
+    }
+    
+    cout << "5 minutes are up, going home\n";
+    
+    print_route();
+    
+    try{
+        navigate();
+    }
+    catch(idp_errors e){
+        print_idp_errors(e);
+        print_status();
+        cout << "No recovery options, exiting\n\n\n";
+        return -1;
+    }
+    
+    print_status();
+    
+    cout << "Finished everything, exiting\n";
     return 0;
     //Shutdown robot properly
     

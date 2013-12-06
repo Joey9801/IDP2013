@@ -190,6 +190,7 @@ void reverse_to_line(turning turn)
     #endif
 	set_motors(128+50, 128+50);
 	delay(1000);
+	set_conveyor(0);
 	if(turn == RIGHT)
 		{	
 		set_motors(60,128+60);
